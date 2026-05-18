@@ -63,10 +63,10 @@
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
-    background:
-      radial-gradient(circle at top left, rgba(47, 128, 255, 0.08), transparent 32rem),
-      radial-gradient(circle at top right, rgba(192, 97, 255, 0.08), transparent 30rem),
-      var(--bg);
+    background-color: var(--bg);
+    background-image: url("./assets/images/bg-pattern-l.jpg");
+    background-position: top left;
+    background-repeat: repeat;
     color: var(--text-primary);
     font-family: var(--font-sans);
     font-size: 15px;
@@ -126,7 +126,7 @@
 
 @layer components {
   .page-shell {
-    @apply mx-auto flex min-h-screen w-full max-w-content flex-col gap-section px-4 py-8 sm:px-page lg:px-10;
+    @apply mx-auto flex min-h-screen w-full max-w-content flex-col gap-section px-4 py-8 sm:px-page;
   }
 
   .section-shell {
@@ -155,7 +155,7 @@
   .btn-primary,
   .btn-secondary,
   .btn-ghost {
-    @apply inline-flex h-12 items-center justify-center gap-2 rounded-button px-6 text-label font-semibold transition-all duration-180 ease-premium disabled:pointer-events-none disabled:opacity-60;
+    @apply inline-flex h-12 items-center justify-center gap-2 rounded-button px-6 text-label transition-all duration-180 ease-premium disabled:pointer-events-none disabled:opacity-60;
   }
 
   .btn-primary {
@@ -181,7 +181,7 @@
 
   .input-field,
   .select-field {
-    @apply h-12 w-full rounded-button border border-border bg-surface px-4 text-body text-text-primary shadow-soft-sm transition-all duration-180 ease-premium placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15;
+    @apply h-12 w-full rounded-button border border-border bg-surface px-4 text-body text-text-primary shadow-soft-sm transition-all duration-180 ease-premium placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/[0.12];
   }
 
   .field-label {
@@ -189,63 +189,46 @@
   }
 
   .badge {
-    display: inline-flex;
+    @apply inline-flex items-center rounded-full px-2 text-tiny;
     height: 22px;
-    align-items: center;
-    border-radius: var(--radius-pill);
-    padding: 0 8px;
-    font-size: 11px;
-    font-weight: 600;
-    line-height: 1;
     white-space: nowrap;
   }
 
   .badge-variant {
-    background: #EEF2FF;
-    color: #5B5CF0;
+    @apply bg-variant-base-bg text-variant-base-text;
   }
 
   .badge-reverse {
-    background: #E0F2FE;
-    color: #0284C7;
+    @apply bg-variant-reverse-bg text-variant-reverse-text;
   }
 
   .badge-pokeball {
-    background: #F3F4F6;
-    color: #64748B;
+    @apply bg-variant-poke-ball-bg text-variant-poke-ball-text;
   }
 
   .badge-masterball {
-    background: #FCE7F3;
-    color: #DB2777;
+    @apply bg-variant-master-ball-bg text-variant-master-ball-text;
   }
 
   .badge-promo {
-    background: #ECFDF5;
-    color: #059669;
+    @apply bg-variant-promo-bg text-variant-promo-text;
   }
 
   .badge-cosmos {
-    background: #E0F2FE;
-    color: #0369A1;
+    @apply bg-variant-cosmos-bg text-variant-cosmos-text;
   }
 
   .badge-success {
-    background: var(--success-bg);
-    color: #059669;
+    @apply bg-success-bg text-success;
   }
 
   .progress-track {
-    height: 8px;
-    overflow: hidden;
-    border-radius: var(--radius-pill);
-    background: #E9ECF3;
+    @apply h-2 overflow-hidden rounded-full bg-progress-track;
   }
 
   .progress-fill {
-    height: 100%;
+    @apply h-full bg-gradient-brand;
     border-radius: inherit;
-    background: var(--gradient-brand);
     transition: width 240ms var(--ease-premium);
   }
 
@@ -256,11 +239,8 @@
   }
 
   .modal-panel {
+    @apply rounded-modal border border-border bg-surface shadow-soft-lg;
     width: min(100%, 520px);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border);
-    background: var(--surface);
-    box-shadow: var(--shadow-lg);
   }
 
   .empty-state {
@@ -298,7 +278,7 @@
   }
 
   .tiny-tag {
-    @apply text-tiny font-semibold uppercase tracking-wider;
+    @apply text-tiny;
   }
 
   .gradient-text {

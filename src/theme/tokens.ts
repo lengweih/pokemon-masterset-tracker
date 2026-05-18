@@ -27,37 +27,55 @@ export const designTokens = {
       cyan: "#06B6D4",
     },
     status: {
-      success: "#22C55E",
-      successBg: "#EAFBF1",
-      warning: "#F59E0B",
-      warningBg: "#FFF7E7",
-      danger: "#F43F5E",
-      dangerBg: "#FFF1F3",
-      info: "#06B6D4",
-      infoBg: "#ECFEFF",
+      success: {
+        DEFAULT: "#22C55E",
+        bg: "#EAFBF1",
+      },
+      warning: {
+        DEFAULT: "#F59E0B",
+        bg: "#FFF7E7",
+      },
+      danger: {
+        DEFAULT: "#F43F5E",
+        bg: "#FFF1F3",
+      },
+      info: {
+        DEFAULT: "#06B6D4",
+        bg: "#ECFEFF",
+      },
     },
     progress: {
       track: "#E9ECF3",
     },
     variant: {
-      baseBg: "#EEF2FF",
-      baseText: "#5B5CF0",
-      reverseBg: "#E0F2FE",
-      reverseText: "#0284C7",
-      pokeBallBg: "#F3F4F6",
-      pokeBallText: "#64748B",
-      masterBallBg: "#FCE7F3",
-      masterBallText: "#DB2777",
-      promoBg: "#ECFDF5",
-      promoText: "#059669",
-      cosmosBg: "#E0F2FE",
-      cosmosText: "#0369A1",
+      base: {
+        bg: "#EEF2FF",
+        text: "#5B5CF0",
+      },
+      reverse: {
+        bg: "#E0F2FE",
+        text: "#0284C7",
+      },
+      "poke-ball": {
+        bg: "#F3F4F6",
+        text: "#64748B",
+      },
+      "master-ball": {
+        bg: "#FCE7F3",
+        text: "#DB2777",
+      },
+      promo: {
+        bg: "#ECFDF5",
+        text: "#059669",
+      },
+      cosmos: {
+        bg: "#E0F2FE",
+        text: "#0369A1",
+      },
     },
   },
   gradients: {
     brand: "linear-gradient(135deg, #2F80FF 0%, #7B61FF 55%, #C061FF 100%)",
-    soft:
-      "linear-gradient(135deg, rgba(47, 128, 255, 0.12) 0%, rgba(123, 97, 255, 0.1) 55%, rgba(192, 97, 255, 0.12) 100%)",
   },
   typography: {
     fontFamily: {
@@ -77,7 +95,6 @@ export const designTokens = {
   spacing: {
     scale: {
       0: "0px",
-      px: "1px",
       1: "4px",
       2: "8px",
       3: "12px",
@@ -92,14 +109,10 @@ export const designTokens = {
       page: "32px",
       card: "24px",
       section: "48px",
-      sidebar: "280px",
     },
     layout: {
       sidebar: "280px",
       content: "1440px",
-      pagePadding: "32px",
-      cardGap: "24px",
-      sectionGap: "48px",
     },
   },
   radius: {

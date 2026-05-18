@@ -35,7 +35,6 @@ const config = {
     extend: {
       backgroundImage: {
         "gradient-brand": designTokens.gradients.brand,
-        "gradient-soft": designTokens.gradients.soft,
       },
       borderRadius: {
         sm: designTokens.radius.sm,
@@ -61,22 +60,10 @@ const config = {
         border: designTokens.colors.border,
         primary: designTokens.colors.primary,
         brand: designTokens.colors.brand,
-        success: {
-          DEFAULT: designTokens.colors.status.success,
-          bg: designTokens.colors.status.successBg,
-        },
-        warning: {
-          DEFAULT: designTokens.colors.status.warning,
-          bg: designTokens.colors.status.warningBg,
-        },
-        danger: {
-          DEFAULT: designTokens.colors.status.danger,
-          bg: designTokens.colors.status.dangerBg,
-        },
-        info: {
-          DEFAULT: designTokens.colors.status.info,
-          bg: designTokens.colors.status.infoBg,
-        },
+        success: designTokens.colors.status.success,
+        warning: designTokens.colors.status.warning,
+        danger: designTokens.colors.status.danger,
+        info: designTokens.colors.status.info,
         variant: designTokens.colors.variant,
         progress: {
           track: designTokens.colors.progress.track,
