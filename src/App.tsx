@@ -1,5 +1,5 @@
-function App() {
-  return null;
-}
+import HomePage from "./pages/HomePage";
 
-export default App;
+export function App() {
+  return <HomePage />;
+}

@@ -138,7 +138,7 @@
   }
 
   .surface-panel {
-    @apply rounded-xl border border-border bg-surface p-6 shadow-soft-md;
+    @apply rounded-modal border border-border bg-surface py-6 px-4 shadow-soft-md;
   }
 
   .interactive-card {
@@ -244,7 +244,7 @@
   }
 
   .empty-state {
-    @apply flex min-h-80 flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-border-strong bg-surface-secondary p-8 text-center;
+    @apply flex min-h-80 flex-col items-center justify-center gap-4 rounded-modal border border-dashed border-border-strong bg-surface-secondary p-8 text-center;
   }
 }
 

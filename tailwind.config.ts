@@ -31,18 +31,11 @@ const fontSize = {
 const config = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    spacing: designTokens.spacing.scale,
     extend: {
       backgroundImage: {
         "gradient-brand": designTokens.gradients.brand,
       },
       borderRadius: {
-        sm: designTokens.radius.sm,
-        DEFAULT: designTokens.radius.md,
-        md: designTokens.radius.md,
-        lg: designTokens.radius.lg,
-        xl: designTokens.radius.xl,
-        full: designTokens.radius.pill,
         pill: designTokens.radius.pill,
         button: designTokens.radius.md,
         card: designTokens.radius.card,
@@ -73,6 +66,12 @@ const config = {
         sans: [...designTokens.typography.fontFamily.sans],
       },
       fontSize,
+      spacing: {
+        "22": designTokens.spacing["22"],
+        page: designTokens.spacing.page,
+        card: designTokens.spacing.card,
+        section: designTokens.spacing.section,
+      },
       maxWidth: {
         content: designTokens.spacing.layout.content,
       },
