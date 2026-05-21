@@ -1,10 +1,10 @@
-import { images } from "../../../assets/images";
-import { APP_CONFIG } from "../../../config/app";
+import { images } from "../../assets/images";
+import { APP_CONFIG } from "../../config/app";
 
-export function SidebarTitle() {
+export function AppBrand() {
   return (
     <div
-      aria-label="Sidebar title"
+      aria-label="App brand"
       className="flex h-14 items-center justify-center gap-2 px-3"
     >
       <img

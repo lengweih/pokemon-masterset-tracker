@@ -1,6 +1,6 @@
-import { APP_CONFIG } from "../../../config/app";
+import { APP_CONFIG } from "../../config/app";
 
-export function SidebarProfileSection() {
+export function ProfileCard() {
   return (
     <section
       aria-label="Collector profile"
@@ -10,10 +10,10 @@ export function SidebarProfileSection() {
         {APP_CONFIG.collector.initials}
       </div>
       <div className="min-w-0">
-        <p className="truncate text-lg font-light text-text-primary">
+        <p className="truncate text-[16px] font-light text-text-primary">
           {APP_CONFIG.collector.name}
         </p>
-        <p className="truncate text-sm text-text-secondary">
+        <p className="truncate text-[13px] text-text-secondary">
           {APP_CONFIG.collector.progressLabel}
         </p>
       </div>

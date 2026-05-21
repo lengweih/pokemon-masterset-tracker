@@ -20,11 +20,11 @@ export function SummaryStatCard({ stat }: SummaryStatCardProps) {
   return (
     <article
       aria-label={`${stat.label}: ${stat.value}`}
-      className="surface-card flex h-[148px] items-center px-6 py-5"
+      className="surface-card flex items-center justify-center px-5 py-5 h-48 xl:h-[130px] xl:justify-start"
     >
-      <div className="flex items-start gap-5 xl:gap-4 2xl:gap-5">
+      <div className="flex flex-col items-center justify-center gap-2 xl:flex-row xl:items-start xl:justify-start xl:gap-4 2xl:gap-5">
         <div
-          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full xl:h-14 xl:w-14 2xl:h-16 2xl:w-16"
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full lg:h-16 lg:w-16"
           style={{
             backgroundColor: stat.iconBackground,
             color: stat.color,
@@ -32,22 +32,22 @@ export function SummaryStatCard({ stat }: SummaryStatCardProps) {
         >
           <Icon
             aria-hidden="true"
-            className="h-8 w-8 xl:h-7 xl:w-7 2xl:h-8 2xl:w-8"
+            className="h-7 w-7 lg:h-8 lg:w-8"
             strokeWidth={2}
           />
         </div>
 
-        <div className="min-w-0">
-          <h2 className="whitespace-nowrap text-[16px] font-medium text-text-primary">
+        <div className="min-w-0 text-center xl:text-left">
+          <h2 className="whitespace-nowrap text-[15px] font-medium text-text-primary sm:text-[16px]">
             {stat.label}
           </h2>
           <p
-            className="mt-1 whitespace-nowrap text-[32px] font-semibold leading-none"
+            className="mt-1 whitespace-nowrap text-[30px] font-semibold leading-none sm:text-[32px]"
             style={{ color: stat.color }}
           >
             {stat.value}
           </p>
-          <p className="mt-4 whitespace-nowrap text-sm xl:text-[12.5px] 2xl:text-sm font-medium text-text-secondary">
+          <p className="mt-2 whitespace-nowrap text-[12.5px] font-medium text-text-secondary 2xl:text-sm">
             {stat.supportingText}
           </p>
         </div>

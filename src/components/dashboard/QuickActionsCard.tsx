@@ -9,7 +9,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { dashboardQuickActions } from "../../data/dashboard";
 import type { DashboardQuickAction } from "../../types/dashboard";
-import { DashboardSectionHeader } from "./DashboardSectionHeader";
+import { DashboardCardHeader } from "./DashboardCardHeader";
 
 const quickActionIcons: Record<DashboardQuickAction["icon"], LucideIcon> = {
   "cloud-upload": CloudUpload,
@@ -20,14 +20,14 @@ const quickActionIcons: Record<DashboardQuickAction["icon"], LucideIcon> = {
 export function QuickActionsCard() {
   return (
     <article className="surface-card h-full px-4 py-6">
-      <DashboardSectionHeader
+      <DashboardCardHeader
         description="Common tasks and tools"
         icon={Zap}
         iconColor="#7B61FF"
         title="Quick Actions"
       />
 
-      <div className="mt-7 grid gap-4">
+      <div className="mt-7 grid gap-2 xl:gap-3">
         {dashboardQuickActions.map((action) => {
           const Icon = quickActionIcons[action.icon];
 

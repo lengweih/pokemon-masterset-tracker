@@ -110,9 +110,12 @@ export const designTokens = {
     card: "24px",
     section: "48px",
     layout: {
-      sidebar: "280px",
+      navigation: "280px",
       content: "1440px",
     },
+  },
+  screens: {
+    xs: "560px",
   },
   radius: {
     sm: "var(--radius-sm)",

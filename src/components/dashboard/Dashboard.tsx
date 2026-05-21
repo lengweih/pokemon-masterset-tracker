@@ -1,13 +1,13 @@
 import { DashboardHeroSection } from "./DashboardHeroSection";
-import { DashboardDetailsSection } from "./DashboardDetailsSection";
-import { DashboardSummaryStats } from "./DashboardSummaryStats";
+import { DashboardCardsGrid } from "./DashboardCardsGrid";
+import { SummaryStatsGrid } from "./SummaryStatsGrid";
 
 export function Dashboard() {
   return (
-    <div aria-label="Home dashboard skeleton" className="grid w-full self-start gap-4">
+    <div aria-label="Home dashboard" className="grid w-full self-start gap-3">
       <DashboardHeroSection />
-      <DashboardSummaryStats />
-      <DashboardDetailsSection />
+      <SummaryStatsGrid />
+      <DashboardCardsGrid />
     </div>
   );
 }

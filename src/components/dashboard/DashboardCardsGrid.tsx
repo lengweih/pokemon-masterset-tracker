@@ -2,10 +2,10 @@ import { ChangelogCard } from "./ChangelogCard";
 import { ProgressOverviewCard } from "./ProgressOverviewCard";
 import { QuickActionsCard } from "./QuickActionsCard";
 
-export function DashboardDetailsSection() {
+export function DashboardCardsGrid() {
   return (
     <section
-      aria-label="Dashboard detail sections"
+      aria-label="Dashboard cards"
       className="grid gap-3 xl:grid-cols-[1fr_0.9fr_1.1fr]"
     >
       <ProgressOverviewCard />

@@ -76,10 +76,13 @@ const config = {
       maxWidth: {
         content: designTokens.spacing.layout.content,
       },
+      screens: {
+        xs: designTokens.screens.xs,
+      },
       transitionDuration: designTokens.motion.durations,
       transitionTimingFunction: designTokens.motion.easing,
       width: {
-        sidebar: designTokens.spacing.layout.sidebar,
+        navigation: designTokens.spacing.layout.navigation,
       },
     },
   },

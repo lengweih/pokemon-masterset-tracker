@@ -1,19 +1,19 @@
 import { ChartNoAxesCombined } from "lucide-react";
 
 import { dashboardProgressItems } from "../../data/dashboard";
-import { DashboardSectionHeader } from "./DashboardSectionHeader";
+import { DashboardCardHeader } from "./DashboardCardHeader";
 
 export function ProgressOverviewCard() {
   return (
     <article className="surface-card h-full p-6">
-      <DashboardSectionHeader
+      <DashboardCardHeader
         description="Your collection progress at a glance"
         icon={ChartNoAxesCombined}
         iconColor="#7B61FF"
         title="Progress Overview"
       />
 
-      <div className="mt-11 grid gap-10">
+      <div className="mt-7 grid gap-10">
         {dashboardProgressItems.map((item) => (
           <div key={item.label}>
             <div className="flex items-center justify-between gap-4">

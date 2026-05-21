@@ -276,30 +276,6 @@
   .empty-state {
     @apply flex min-h-80 flex-col items-center justify-center gap-4 rounded-modal border border-dashed border-border-strong bg-surface-secondary p-8 text-center;
   }
-
-  .rainbow-heart {
-    color: var(--blue);
-    animation: rainbow-heart-cycle 2.4s var(--ease-premium) infinite;
-  }
-}
-
-@keyframes rainbow-heart-cycle {
-  0%,
-  100% {
-    color: var(--blue);
-  }
-
-  25% {
-    color: var(--violet);
-  }
-
-  50% {
-    color: var(--purple);
-  }
-
-  75% {
-    color: var(--cyan);
-  }
 }
 
 @layer utilities {

@@ -2,12 +2,12 @@ import { ExternalLink, FileText } from "lucide-react";
 
 import { changelogEntries } from "../../data/changelog";
 import { ROUTES } from "../../routes/paths";
-import { DashboardSectionHeader } from "./DashboardSectionHeader";
+import { DashboardCardHeader } from "./DashboardCardHeader";
 
 export function ChangelogCard() {
   return (
     <article className="surface-card h-full p-6">
-      <DashboardSectionHeader
+      <DashboardCardHeader
         description="Latest updates & improvements"
         icon={FileText}
         iconColor="#7B61FF"

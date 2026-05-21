@@ -1,18 +1,18 @@
 import type { LucideIcon } from "lucide-react";
 
-interface DashboardSectionHeaderProps {
+interface DashboardCardHeaderProps {
   description: string;
   icon: LucideIcon;
   iconColor: string;
   title: string;
 }
 
-export function DashboardSectionHeader({
+export function DashboardCardHeader({
   description,
   icon: Icon,
   iconColor,
   title,
-}: DashboardSectionHeaderProps) {
+}: DashboardCardHeaderProps) {
   return (
     <div className="flex items-start gap-4">
       <Icon

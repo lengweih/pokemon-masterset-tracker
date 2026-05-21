@@ -1,20 +1,20 @@
 import { ROUTES } from "../routes/paths";
 import type { AppRoute } from "../routes/paths";
 
-export type SidebarNavigationIcon =
+export type NavigationIcon =
   | "heart"
   | "layout-dashboard"
   | "library"
   | "package";
 
-export interface SidebarNavigationTab {
+export interface NavigationLink {
   href: AppRoute;
-  icon: SidebarNavigationIcon;
+  icon: NavigationIcon;
   isActive?: boolean;
   label: string;
 }
 
-export const sidebarNavigationTabs: SidebarNavigationTab[] = [
+export const navigationLinks: NavigationLink[] = [
   {
     href: ROUTES.home,
     icon: "layout-dashboard",

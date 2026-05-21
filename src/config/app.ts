@@ -3,7 +3,7 @@ export const APP_CONFIG = {
   version: "v1.0.0",
   copyrightYear: 2026,
   githubUrl: "https://github.com/",
-  footerTagline: "Built for collectors, by collectors",
+  footerTagline: "Built for collectors",
   currentSetName: "Prismatic Evolutions",
   collector: {
     initials: "CB",
