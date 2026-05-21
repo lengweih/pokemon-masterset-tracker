@@ -1,11 +1,5 @@
-import { BlankSection } from "../ui/BlankSection";
-
-const summaryCardLabels = [
-  "Summary stat card one",
-  "Summary stat card two",
-  "Summary stat card three",
-  "Summary stat card four",
-] as const;
+import { dashboardSummaryStats } from "../../data/dashboard";
+import { SummaryStatCard } from "./SummaryStatCard";
 
 export function DashboardSummaryStats() {
   return (
@@ -13,13 +7,8 @@ export function DashboardSummaryStats() {
       aria-label="Summary stats section"
       className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
     >
-      {summaryCardLabels.map((label) => (
-        <BlankSection
-          key={label}
-          ariaLabel={label}
-          className="h-[148px]"
-          variant="card"
-        />
+      {dashboardSummaryStats.map((stat) => (
+        <SummaryStatCard key={stat.label} stat={stat} />
       ))}
     </section>
   );

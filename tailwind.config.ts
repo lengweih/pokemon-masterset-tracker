@@ -45,6 +45,7 @@ const config = {
         "soft-sm": designTokens.shadows.sm,
         "soft-md": designTokens.shadows.md,
         "soft-lg": designTokens.shadows.lg,
+        "inner-ring": designTokens.shadows.inner,
       },
       colors: {
         background: designTokens.colors.bg,

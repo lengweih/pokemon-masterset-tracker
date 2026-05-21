@@ -13,8 +13,8 @@
     --text-secondary: #5B6478;
     --text-muted: #8A94A6;
 
-    --border: #E7EAF3;
-    --border-strong: #D9DEEA;
+    --border: #EEF2F8;
+    --border-strong: #DDE5F0;
 
     --primary: #5B5CF0;
     --primary-hover: #4B4CE2;
@@ -39,10 +39,32 @@
     --radius-lg: 18px;
     --radius-xl: 24px;
     --radius-pill: 999px;
+    --radius-card: 20px;
 
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 6px 20px rgba(91, 92, 240, 0.06);
-    --shadow-lg: 0 12px 40px rgba(91, 92, 240, 0.08);
+    --shadow-sm:
+      inset 1px 0 0 rgba(148, 163, 184, 0.18),
+      inset -1px 0 0 rgba(148, 163, 184, 0.18),
+      inset 0 1px 0 rgba(148, 163, 184, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.86),
+      0 3px 3px -2px rgba(15, 23, 42, 0.12),
+      0 8px 10px -7px rgba(15, 23, 42, 0.2);
+    --shadow-md:
+      inset 1px 0 0 rgba(148, 163, 184, 0.18),
+      inset -1px 0 0 rgba(148, 163, 184, 0.18),
+      inset 0 1px 0 rgba(148, 163, 184, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.86),
+      0 3px 4px -2px rgba(15, 23, 42, 0.14),
+      0 10px 14px -9px rgba(15, 23, 42, 0.24);
+    --shadow-lg:
+      inset 1px 0 0 rgba(148, 163, 184, 0.18),
+      inset -1px 0 0 rgba(148, 163, 184, 0.18),
+      inset 0 1px 0 rgba(148, 163, 184, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.86),
+      0 4px 6px -3px rgba(15, 23, 42, 0.16),
+      0 12px 18px -11px rgba(15, 23, 42, 0.26);
+    --inner-ring:
+      inset 0 0 0 1px rgba(148, 163, 184, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.86);
 
     --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
     --gradient-brand: linear-gradient(135deg, #2F80FF 0%, #7B61FF 55%, #C061FF 100%);
@@ -141,6 +163,11 @@
     @apply rounded-modal border border-border bg-surface py-6 px-4 shadow-soft-md;
   }
 
+  .inner-ring {
+    @apply border border-border-strong;
+    box-shadow: var(--inner-ring);
+  }
+
   .interactive-card {
     @apply surface-card transition-all duration-180 ease-premium;
   }
@@ -159,16 +186,17 @@
   }
 
   .btn-primary {
-    @apply bg-gradient-brand text-white shadow-soft-sm;
+    @apply bg-gradient-brand text-white;
   }
 
   .btn-primary:hover {
-    box-shadow: var(--shadow-md);
+    filter: brightness(1.03);
     transform: translateY(-1px);
   }
 
   .btn-secondary {
-    @apply border border-border bg-surface px-5 text-text-primary shadow-soft-sm hover:bg-surface-hover;
+    @apply border border-border-strong bg-surface px-5 text-text-primary hover:bg-surface-hover;
+    box-shadow: var(--inner-ring);
   }
 
   .btn-ghost {
@@ -176,12 +204,14 @@
   }
 
   .icon-button {
-    @apply inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text-secondary shadow-soft-sm transition-all duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary;
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-strong bg-surface text-text-secondary transition-all duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary;
+    box-shadow: var(--inner-ring);
   }
 
   .input-field,
   .select-field {
-    @apply h-12 w-full rounded-button border border-border bg-surface px-4 text-body text-text-primary shadow-soft-sm transition-all duration-180 ease-premium placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/[0.12];
+    @apply h-12 w-full rounded-button border border-border-strong bg-surface px-4 text-body text-text-primary transition-all duration-180 ease-premium placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/[0.12];
+    box-shadow: var(--inner-ring);
   }
 
   .field-label {
@@ -245,6 +275,30 @@
 
   .empty-state {
     @apply flex min-h-80 flex-col items-center justify-center gap-4 rounded-modal border border-dashed border-border-strong bg-surface-secondary p-8 text-center;
+  }
+
+  .rainbow-heart {
+    color: var(--blue);
+    animation: rainbow-heart-cycle 2.4s var(--ease-premium) infinite;
+  }
+}
+
+@keyframes rainbow-heart-cycle {
+  0%,
+  100% {
+    color: var(--blue);
+  }
+
+  25% {
+    color: var(--violet);
+  }
+
+  50% {
+    color: var(--purple);
+  }
+
+  75% {
+    color: var(--cyan);
   }
 }
 

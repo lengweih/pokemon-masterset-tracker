@@ -12,8 +12,8 @@ export const designTokens = {
       muted: "#8A94A6",
     },
     border: {
-      DEFAULT: "#E7EAF3",
-      strong: "#D9DEEA",
+      DEFAULT: "#EEF2F8",
+      strong: "#DDE5F0",
     },
     primary: {
       DEFAULT: "#5B5CF0",
@@ -75,21 +75,33 @@ export const designTokens = {
     },
   },
   gradients: {
-    brand: "linear-gradient(135deg, #2F80FF 0%, #7B61FF 55%, #C061FF 100%)",
+    brand: "var(--gradient-brand)",
   },
   typography: {
     fontFamily: {
-      sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+      sans: ["var(--font-sans)"],
     },
     fontSize: {
-      display: ["64px", { lineHeight: "1", letterSpacing: "-0.04em", fontWeight: "800" }],
-      h1: ["48px", { lineHeight: "1.1", letterSpacing: "-0.03em", fontWeight: "700" }],
-      h2: ["36px", { lineHeight: "1.2", letterSpacing: "-0.025em", fontWeight: "700" }],
-      h3: ["28px", { lineHeight: "1.3", letterSpacing: "-0.02em", fontWeight: "700" }],
+      display: [
+        "64px",
+        { lineHeight: "1", letterSpacing: "0", fontWeight: "700" },
+      ],
+      h1: [
+        "48px",
+        { lineHeight: "1.1", letterSpacing: "0", fontWeight: "700" },
+      ],
+      h2: [
+        "36px",
+        { lineHeight: "1.2", letterSpacing: "0", fontWeight: "700" },
+      ],
+      h3: [
+        "28px",
+        { lineHeight: "1.3", letterSpacing: "0", fontWeight: "650" },
+      ],
       card: ["18px", { lineHeight: "1.4", fontWeight: "600" }],
-      body: ["15px", { lineHeight: "1.6", fontWeight: "500" }],
-      label: ["13px", { lineHeight: "1.4", fontWeight: "600" }],
-      tiny: ["11px", { lineHeight: "1", fontWeight: "600" }],
+      body: ["15px", { lineHeight: "1.55", fontWeight: "500" }],
+      label: ["13px", { lineHeight: "1.4", fontWeight: "500" }],
+      tiny: ["11px", { lineHeight: "1", fontWeight: "500" }],
     },
   },
   spacing: {
@@ -103,17 +115,18 @@ export const designTokens = {
     },
   },
   radius: {
-    sm: "10px",
-    md: "14px",
-    lg: "18px",
-    xl: "24px",
-    pill: "999px",
-    card: "20px",
+    sm: "var(--radius-sm)",
+    md: "var(--radius-md)",
+    lg: "var(--radius-lg)",
+    xl: "var(--radius-xl)",
+    pill: "var(--radius-pill)",
+    card: "var(--radius-card)",
   },
   shadows: {
-    sm: "0 1px 2px rgba(15, 23, 42, 0.04)",
-    md: "0 6px 20px rgba(91, 92, 240, 0.06)",
-    lg: "0 12px 40px rgba(91, 92, 240, 0.08)",
+    sm: "var(--shadow-sm)",
+    md: "var(--shadow-md)",
+    lg: "var(--shadow-lg)",
+    inner: "var(--inner-ring)",
   },
   motion: {
     durations: {
@@ -122,7 +135,7 @@ export const designTokens = {
       320: "320ms",
     },
     easing: {
-      premium: "cubic-bezier(0.22, 1, 0.36, 1)",
+      premium: "var(--ease-premium)",
     },
   },
 } as const;

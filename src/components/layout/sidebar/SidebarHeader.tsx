@@ -5,7 +5,7 @@ export function SidebarHeader() {
   return (
     <section
       aria-label="Sidebar top section"
-      className="surface-panel flex h-48 flex-col justify-between gap-4"
+      className="surface-panel flex h-44 flex-col justify-between gap-2"
     >
       <SidebarTitle />
       <MastersetSelector />
