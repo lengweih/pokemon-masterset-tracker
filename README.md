@@ -31,3 +31,16 @@ npm run preview
 ## Deployment
 
 Build output is generated in `dist/` and is intended to stay static-hosting friendly.
+
+This project deploys to GitHub Pages through `.github/workflows/deploy.yml`.
+The workflow runs on pushes to `main`, builds the Vite app, uploads `dist/`,
+and publishes it with GitHub Pages.
+
+For this repository, the production URL is:
+
+```txt
+https://lengweih.github.io/pokemon-masterset-tracker/
+```
+
+In GitHub, set `Settings -> Pages -> Build and deployment -> Source` to
+`GitHub Actions`.
