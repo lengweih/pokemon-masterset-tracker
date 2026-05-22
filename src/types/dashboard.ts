@@ -32,11 +32,3 @@ export interface DashboardQuickAction {
   iconColor: string;
   label: string;
 }
-
-export interface DashboardChangelogEntry {
-  date: string;
-  description: string;
-  dotColor: string;
-  title: string;
-  version: string;
-}

@@ -10,7 +10,6 @@ export type NavigationIcon =
 export interface NavigationLink {
   href: AppRoute;
   icon: NavigationIcon;
-  isActive?: boolean;
   label: string;
 }
 
@@ -18,7 +17,6 @@ export const navigationLinks: NavigationLink[] = [
   {
     href: ROUTES.home,
     icon: "layout-dashboard",
-    isActive: true,
     label: "Dashboard",
   },
   { href: ROUTES.collection, icon: "library", label: "Collection" },

@@ -1,6 +1,6 @@
-import type { DashboardChangelogEntry } from "../types/dashboard";
+import type { ChangelogEntry } from "../types/changelog";
 
-export const changelogEntries: DashboardChangelogEntry[] = [
+export const changelogEntries: ChangelogEntry[] = [
   {
     date: "MAY 20, 2024",
     description:

@@ -6,6 +6,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { dashboardQuickActions } from "../../data/dashboard";
 import type { DashboardQuickAction } from "../../types/dashboard";
@@ -19,7 +20,7 @@ const quickActionIcons: Record<DashboardQuickAction["icon"], LucideIcon> = {
 
 export function QuickActionsCard() {
   return (
-    <article className="surface-card h-full px-4 py-6">
+    <article className="surface-card h-full p-6">
       <DashboardCardHeader
         description="Common tasks and tools"
         icon={Zap}
@@ -32,10 +33,10 @@ export function QuickActionsCard() {
           const Icon = quickActionIcons[action.icon];
 
           return (
-            <a
+            <Link
               key={action.label}
               className="inner-ring flex h-[62px] items-center gap-2 rounded-button bg-surface px-3 transition-all duration-180 ease-premium hover:bg-surface-hover"
-              href={action.href}
+              to={action.href}
             >
               <Icon
                 aria-hidden="true"
@@ -56,7 +57,7 @@ export function QuickActionsCard() {
                 className="h-5 w-5 shrink-0 text-text-secondary"
                 strokeWidth={2}
               />
-            </a>
+            </Link>
           );
         })}
       </div>
