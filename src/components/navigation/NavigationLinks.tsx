@@ -1,8 +1,10 @@
 import { Heart, LayoutDashboard, Library, Package } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 import { navigationLinks } from "../../data/navigation";
 import type { NavigationLink } from "../../data/navigation";
+import { ROUTES } from "../../routes/paths";
 
 const navigationIcons: Record<NavigationLink["icon"], LucideIcon> = {
   heart: Heart,
@@ -18,16 +20,18 @@ export function NavigationLinks() {
         const Icon = navigationIcons[link.icon];
 
         return (
-          <a
+          <NavLink
             key={link.label}
-            aria-current={link.isActive ? "page" : undefined}
-            className={[
-              "flex h-14 items-center gap-4 rounded-button px-4 text-body font-medium leading-none transition-all duration-180 ease-premium",
-              link.isActive
-                ? "inner-ring bg-primary-light text-brand-blue"
-                : "text-text-secondary hover:bg-surface-hover hover:text-text-primary",
-            ].join(" ")}
-            href={link.href}
+            className={({ isActive }) =>
+              [
+                "flex h-14 items-center gap-4 rounded-button px-4 text-body font-medium leading-none transition-all duration-180 ease-premium",
+                isActive
+                  ? "inner-ring bg-primary-light text-brand-blue"
+                  : "text-text-secondary hover:bg-surface-hover hover:text-text-primary",
+              ].join(" ")
+            }
+            end={link.href === ROUTES.home}
+            to={link.href}
           >
             <Icon
               aria-hidden="true"
@@ -35,7 +39,7 @@ export function NavigationLinks() {
               strokeWidth={2}
             />
             <span>{link.label}</span>
-          </a>
+          </NavLink>
         );
       })}
     </nav>

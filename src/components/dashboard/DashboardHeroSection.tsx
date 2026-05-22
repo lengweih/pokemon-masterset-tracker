@@ -1,4 +1,5 @@
 import { ArrowRight, LayoutGrid } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { images } from "../../assets/images";
 import { ROUTES } from "../../routes/paths";
@@ -41,9 +42,9 @@ export function DashboardHeroSection() {
         </p>
 
         <div className="mt-4 xs:mt-8 flex flex-wrap items-center gap-3 xs:gap-6">
-          <a
+          <Link
             className="inline-flex h-12 xs:h-14 xs:w-[210px] w-full items-center justify-center gap-3 rounded-button bg-gradient-brand px-7 text-[16px] font-medium text-white transition-all duration-180 ease-premium hover:brightness-[1.03]"
-            href={ROUTES.collection}
+            to={ROUTES.collection}
           >
             <span>View Collection</span>
             <ArrowRight
@@ -51,11 +52,11 @@ export function DashboardHeroSection() {
               className="h-5 w-5"
               strokeWidth={2}
             />
-          </a>
+          </Link>
 
-          <a
+          <Link
             className="inner-ring inline-flex h-12 xs:h-14 xs:w-[210px] w-full items-center justify-center gap-3 rounded-button bg-surface px-7 text-[16px] font-medium text-text-primary transition-all duration-180 ease-premium hover:bg-surface-hover"
-            href={ROUTES.collection}
+            to={ROUTES.collection}
           >
             <LayoutGrid
               aria-hidden="true"
@@ -63,7 +64,7 @@ export function DashboardHeroSection() {
               strokeWidth={2}
             />
             <span>Missing Cards</span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>
