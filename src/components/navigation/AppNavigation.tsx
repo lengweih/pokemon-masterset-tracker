@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { images } from "../../assets/images";
 import { APP_CONFIG } from "../../config/app";
+import { ROUTES } from "../../routes/paths";
 import { MastersetSelector } from "./MastersetSelector";
 import { NavigationHeader } from "./NavigationHeader";
 import { NavigationPanel } from "./NavigationPanel";
@@ -74,15 +76,22 @@ export function AppNavigation() {
               </motion.span>
             </button>
 
-            <img
-              src={images.titleIcon}
-              alt=""
-              aria-hidden="true"
-              className="h-8 w-8 shrink-0 object-contain"
-            />
-            <p className="truncate text-[16px] font-bold leading-none text-text-primary">
-              {APP_CONFIG.name}
-            </p>
+            <Link
+              aria-label="Go to dashboard"
+              className="flex h-11 min-w-0 items-center gap-2 rounded-button pr-3 transition-all duration-180 ease-premium hover:bg-surface-hover"
+              to={ROUTES.home}
+              onClick={closeMobileMenu}
+            >
+              <img
+                src={images.titleIcon}
+                alt=""
+                aria-hidden="true"
+                className="h-8 w-8 shrink-0 object-contain"
+              />
+              <span className="truncate text-[16px] font-bold leading-none text-text-primary">
+                {APP_CONFIG.name}
+              </span>
+            </Link>
           </div>
         </div>
 

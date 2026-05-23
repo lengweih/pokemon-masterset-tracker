@@ -77,6 +77,7 @@ const config = {
         content: designTokens.spacing.layout.content,
       },
       screens: {
+        "2xs": designTokens.screens["2xs"],
         xs: designTokens.screens.xs,
       },
       transitionDuration: designTokens.motion.durations,
