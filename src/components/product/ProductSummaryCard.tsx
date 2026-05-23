@@ -1,4 +1,4 @@
-import { Box } from "lucide-react";
+import { Package } from "lucide-react";
 
 interface ProductSummaryCardProps {
   totalProducts: number;
@@ -11,7 +11,7 @@ export function ProductSummaryCard({ totalProducts }: ProductSummaryCardProps) {
       className="inner-ring flex items-center gap-4 rounded-card bg-surface p-4 h-24"
     >
       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-light text-brand-blue">
-        <Box aria-hidden="true" className="h-7 w-7" strokeWidth={2} />
+        <Package aria-hidden="true" className="h-7 w-7" strokeWidth={2} />
       </div>
 
       <div className="min-w-0">

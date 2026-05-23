@@ -1,5 +1,4 @@
 import heroImage from "./images/screens/hero-image.png";
-import selectorIcon from "./images/screens/selector-icon.png";
 import titleIcon from "./images/screens/title-icon.png";
 import productAccessoryPouch from "./images/products/sv8pt5-accessory-pouch.png";
 import productBinder from "./images/products/sv8pt5-binder.png";
@@ -29,7 +28,6 @@ export const productImages = {
 export const images = {
   heroImage,
   products: productImages,
-  selectorIcon,
   setLogo,
   titleIcon,
 } as const;
