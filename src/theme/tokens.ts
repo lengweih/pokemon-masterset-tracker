@@ -115,6 +115,7 @@ export const designTokens = {
     },
   },
   screens: {
+    "2xs": "420px",
     xs: "560px",
   },
   radius: {
