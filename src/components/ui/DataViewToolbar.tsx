@@ -1,5 +1,7 @@
 import type { ChangeEvent, ReactNode } from "react";
-import { ChevronDown, LayoutGrid, List, Search } from "lucide-react";
+import { LayoutGrid, List, Search } from "lucide-react";
+
+import { DropdownSelect } from "./DropdownSelect";
 
 export type DataViewMode = "grid" | "list";
 
@@ -66,14 +68,6 @@ export function DataViewToolbar<TSortValue extends string>({
     onSearchChange(event.target.value);
   };
 
-  const handleSortChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    onSortChange(event.target.value as TSortValue);
-  };
-
-  const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    onPageSizeChange?.(Number(event.target.value));
-  };
-
   const hasPageSizeControl = Boolean(
     pageSizeOptions?.length &&
     pageSizeValue !== undefined &&
@@ -81,6 +75,11 @@ export function DataViewToolbar<TSortValue extends string>({
     pageSizeLabel &&
     onPageSizeChange,
   );
+  const pageSizeDropdownOptions =
+    pageSizeOptions?.map((option) => ({
+      label: `${option} per page`,
+      value: option,
+    })) ?? [];
 
   const searchControl = (
     <div className="relative min-w-0">
@@ -104,28 +103,13 @@ export function DataViewToolbar<TSortValue extends string>({
   );
 
   const sortControl = (
-    <div className="relative min-w-0">
-      <label className="sr-only" htmlFor={sortSelectId}>
-        {sortLabel}
-      </label>
-      <select
-        id={sortSelectId}
-        className="select-field appearance-none rounded-button pr-12"
-        value={sortValue}
-        onChange={handleSortChange}
-      >
-        {sortOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <ChevronDown
-        aria-hidden="true"
-        className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary"
-        strokeWidth={2}
-      />
-    </div>
+    <DropdownSelect
+      id={sortSelectId}
+      label={sortLabel}
+      options={sortOptions}
+      value={sortValue}
+      onChange={onSortChange}
+    />
   );
 
   const pageSizeControl =
@@ -134,28 +118,16 @@ export function DataViewToolbar<TSortValue extends string>({
     pageSizeValue !== undefined &&
     pageSizeSelectId &&
     pageSizeLabel ? (
-      <div className="relative min-w-0">
-        <label className="sr-only" htmlFor={pageSizeSelectId}>
-          {pageSizeLabel}
-        </label>
-        <select
-          id={pageSizeSelectId}
-          className="select-field appearance-none rounded-buttons pl-4 2xs:pl-3.5 lg:pl-4 text-sm"
-          value={pageSizeValue}
-          onChange={handlePageSizeChange}
-        >
-          {pageSizeOptions.map((option) => (
-            <option key={option} value={option}>
-              {option} per page
-            </option>
-          ))}
-        </select>
-        <ChevronDown
-          aria-hidden="true"
-          className="pointer-events-none absolute right-3 2xs:right-2 lg:right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary"
-          strokeWidth={2}
-        />
-      </div>
+      <DropdownSelect
+        id={pageSizeSelectId}
+        label={pageSizeLabel}
+        options={pageSizeDropdownOptions}
+        value={pageSizeValue}
+        variant="compact"
+        onChange={(value) => {
+          onPageSizeChange?.(value);
+        }}
+      />
     ) : null;
 
   const viewModeControl = (

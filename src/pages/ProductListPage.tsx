@@ -108,9 +108,12 @@ export function ProductListPage() {
     >
       <div className="surface-card p-6 sm:p-8">
         <div className="max-w-3xl">
+          <p className="text-label uppercase tracking-[0.18em] text-brand-blue">
+            Product List
+          </p>
           <h1
             id="product-list-title"
-            className="text-3xl font-bold leading-tight text-text-primary xs:text-[38px] sm:text-[42px]"
+            className="mt-1 text-3xl font-bold leading-tight text-text-primary xs:text-[38px] sm:text-[42px]"
           >
             Product List
           </h1>
