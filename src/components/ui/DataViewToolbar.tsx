@@ -93,7 +93,7 @@ export function DataViewToolbar<TSortValue extends string>({
       />
       <input
         id={searchInputId}
-        className="input-field pl-12"
+        className="data-view-field pl-12"
         placeholder={searchPlaceholder}
         type="search"
         value={searchValue}
@@ -149,9 +149,9 @@ export function DataViewToolbar<TSortValue extends string>({
             aria-label={option.label}
             aria-pressed={isSelected}
             className={[
-              "flex h-12 w-14 items-center justify-center rounded-button border transition-all duration-180 ease-premium",
+              "flex h-12 w-14 items-center justify-center rounded-button border transition-colors duration-180 ease-premium",
               isSelected
-                ? "relative z-10 border-2 border-primary bg-primary-light text-primary"
+                ? "relative z-10 border-primary bg-primary-light text-primary ring-1 ring-primary"
                 : "border-border-strong bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary",
             ].join(" ")}
             type="button"

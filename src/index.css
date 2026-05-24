@@ -214,6 +214,27 @@
     box-shadow: var(--inner-ring);
   }
 
+  .data-view-field {
+    @apply h-12 w-full appearance-none rounded-button border border-border-strong bg-surface px-4 text-body text-text-primary transition-colors duration-180 ease-premium placeholder:text-text-muted;
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: var(--inner-ring);
+    outline: none;
+  }
+
+  .data-view-field::-webkit-search-cancel-button,
+  .data-view-field::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .data-view-field:focus,
+  .data-view-field:focus-visible {
+    border-color: var(--border-strong);
+    box-shadow: var(--inner-ring);
+    outline: none;
+  }
+
   .field-label {
     @apply text-label text-text-secondary;
   }

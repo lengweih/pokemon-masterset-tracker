@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 
 import { ProductCard } from "../components/product/ProductCard";
 import { ProductSummaryCard } from "../components/product/ProductSummaryCard";
@@ -14,6 +15,10 @@ import type { Product, ProductSortOption } from "../types/product";
 
 const DEFAULT_PRODUCTS_PER_PAGE = 8;
 const PRODUCT_PAGE_SIZE_OPTIONS = [4, 8, 12, 16] as const;
+const productViewEnterTransition = {
+  duration: 0.3,
+  ease: [0.64, 0, 0.78, 0],
+} as const;
 
 const productSortOptions = [
   {
@@ -149,19 +154,26 @@ export function ProductListPage() {
         />
 
         {pagination.currentItems.length > 0 ? (
-          <div
+          <motion.div
+            key={viewMode}
+            initial={{ opacity: 0.82 }}
+            animate={{ opacity: 1 }}
             className={
               viewMode === "grid"
                 ? "grid min-h-0 content-start gap-3 sm:grid-cols-2 xl:grid-cols-4"
                 : "grid min-h-0 content-start gap-3"
             }
+            transition={productViewEnterTransition}
           >
             {pagination.currentItems.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                viewMode={viewMode}
-              />
+              <motion.div
+                key={`${viewMode}-${product.id}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={productViewEnterTransition}
+              >
+                <ProductCard product={product} viewMode={viewMode} />
+              </motion.div>
             ))}
             {Array.from({ length: gridPlaceholderCount }, (_, index) => (
               <div
@@ -170,7 +182,7 @@ export function ProductListPage() {
                 className="invisible h-60 w-full rounded-card sm:h-64 xl:h-60"
               />
             ))}
-          </div>
+          </motion.div>
         ) : (
           <div className="empty-state lg:h-full">
             <p className="text-card text-text-primary">No products found</p>

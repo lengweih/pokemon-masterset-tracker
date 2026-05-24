@@ -31,14 +31,14 @@ const dropdownSelectStyles: Record<
 > = {
   default: {
     button:
-      "select-field relative flex items-center appearance-none rounded-button pr-10 text-left",
+      "data-view-field relative flex items-center appearance-none rounded-button pr-10 text-left",
     chevron:
       "pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary",
     value: "min-w-0 flex-1 truncate",
   },
   compact: {
     button:
-      "select-field relative flex items-center appearance-none rounded-buttons pl-4 text-left text-sm 2xs:pl-3.5 lg:pl-4",
+      "data-view-field relative flex items-center appearance-none rounded-button pl-4 text-left text-sm 2xs:pl-3.5 lg:pl-4",
     chevron:
       "pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary 2xs:right-2 lg:right-3",
     value: "min-w-0 flex-1 truncate",
@@ -253,19 +253,19 @@ export function DropdownSelect<TValue extends DropdownSelectValue>({
           <motion.div
             id={optionsId}
             aria-labelledby={buttonId}
-            className="surface-card absolute left-0 right-0 top-full z-20 mt-2 grid origin-top gap-1 p-2"
+            className="surface-card absolute left-0 right-0 top-full z-20 mt-2 grid origin-top gap-1 rounded-button p-2"
             role="listbox"
             initial={{
-              clipPath: "inset(0 0 100% 0 round 20px)",
+              clipPath: "inset(0 0 100% 0 round 14px)",
             }}
             animate={{
-              clipPath: "inset(0 0 0% 0 round 20px)",
+              clipPath: "inset(0 0 0% 0 round 14px)",
               transition: {
                 duration: 0.25,
               },
             }}
             exit={{
-              clipPath: "inset(0 0 100% 0 round 20px)",
+              clipPath: "inset(0 0 100% 0 round 14px)",
               transition: {
                 duration: 0.15,
               },
