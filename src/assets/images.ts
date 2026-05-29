@@ -12,6 +12,22 @@ import productTechStickerThree from "./images/products/sv8pt5-tech-sticker-three
 import productTechStickerTwo from "./images/products/sv8pt5-tech-sticker-two.png";
 import setLogo from "./images/sv8pt5-logo.png";
 
+const rawCardImages = import.meta.glob<string>("./images/cards/PRE-*.webp", {
+  eager: true,
+  import: "default",
+});
+
+const cardImagesByFileName = Object.fromEntries(
+  Object.entries(rawCardImages).map(([path, imageUrl]) => {
+    const fileNameWithExtension = path.split("/").pop() ?? "";
+    const fileName = fileNameWithExtension.replace(/\.[^.]+$/, "");
+
+    return [fileName, imageUrl];
+  }),
+) as Record<string, string>;
+const fallbackCardImage =
+  cardImagesByFileName["PRE-001"] ?? Object.values(cardImagesByFileName)[0] ?? "";
+
 export const productImages = {
   accessoryPouch: productAccessoryPouch,
   binder: productBinder,
@@ -25,7 +41,13 @@ export const productImages = {
   techStickerTwo: productTechStickerTwo,
 } as const;
 
+export const cardImages = {
+  byFileName: cardImagesByFileName,
+  sample: fallbackCardImage,
+} as const;
+
 export const images = {
+  cards: cardImages,
   heroImage,
   products: productImages,
   setLogo,

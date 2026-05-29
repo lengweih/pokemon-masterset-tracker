@@ -13,9 +13,9 @@ export const products: Product[] = [
   {
     id: "sv8pt5-etb-pokemon-center",
     imageAlt:
-      "Prismatic Evolutions Pokemon Center Elite Trainer Box product packaging",
+      "Prismatic Evolutions Pokémon Center Elite Trainer Box product packaging",
     imageUrl: images.products.etbPokemonCenter,
-    name: "Pokemon Center Elite Trainer Box",
+    name: "Pokémon Center Elite Trainer Box",
     releaseDate: "2025-01-17",
     releaseLabel: "Released Jan 17, 2025",
   },

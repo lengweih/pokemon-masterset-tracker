@@ -23,7 +23,7 @@ export function PageHeader({
         </p>
         <h1
           id={titleId}
-          className="mt-3 text-2xl font-bold leading-tight text-text-primary xs:text-3xl sm:text-[42px]"
+          className="gradient-text mt-3 text-2xl font-bold leading-tight xs:text-3xl sm:text-[42px]"
         >
           {title}
         </h1>

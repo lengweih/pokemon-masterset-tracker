@@ -22,19 +22,19 @@ const productViewEnterTransition = {
 
 const productSortOptions = [
   {
-    label: "Sort by: A-Z",
+    label: "A-Z",
     value: "name-asc",
   },
   {
-    label: "Sort by: Z-A",
+    label: "Z-A",
     value: "name-desc",
   },
   {
-    label: "Sort by: Newest",
+    label: "Newest",
     value: "release-newest",
   },
   {
-    label: "Sort by: Oldest",
+    label: "Oldest",
     value: "release-oldest",
   },
 ] satisfies readonly DataViewSortOption<ProductSortOption>[];
@@ -90,6 +90,7 @@ export function ProductListPage() {
     viewMode === "grid" && pagination.totalPages > 1
       ? Math.max(pagination.pageSize - pagination.currentItems.length, 0)
       : 0;
+  const productResultsKey = `${viewMode}-${pagination.currentPage}`;
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -118,7 +119,7 @@ export function ProductListPage() {
           </p>
           <h1
             id="product-list-title"
-            className="mt-1 text-3xl font-bold leading-tight text-text-primary xs:text-[38px] sm:text-[42px]"
+            className="gradient-text mt-1 text-3xl font-bold leading-tight xs:text-[38px] sm:text-[42px]"
           >
             Product List
           </h1>
@@ -142,7 +143,7 @@ export function ProductListPage() {
           pageSizeOptions={PRODUCT_PAGE_SIZE_OPTIONS}
           pageSizeSelectId="product-page-size"
           pageSizeValue={pageSize}
-          sortLabel="Sort products"
+          sortLabel="Sort"
           sortOptions={productSortOptions}
           sortSelectId="product-sort"
           sortValue={sortOption}
@@ -155,7 +156,7 @@ export function ProductListPage() {
 
         {pagination.currentItems.length > 0 ? (
           <motion.div
-            key={viewMode}
+            key={productResultsKey}
             initial={{ opacity: 0.82 }}
             animate={{ opacity: 1 }}
             className={

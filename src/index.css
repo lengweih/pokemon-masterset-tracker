@@ -261,14 +261,6 @@
     @apply bg-variant-master-ball-bg text-variant-master-ball-text;
   }
 
-  .badge-promo {
-    @apply bg-variant-promo-bg text-variant-promo-text;
-  }
-
-  .badge-cosmos {
-    @apply bg-variant-cosmos-bg text-variant-cosmos-text;
-  }
-
   .badge-success {
     @apply bg-success-bg text-success;
   }

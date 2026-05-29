@@ -1,6 +1,9 @@
 import { APP_CONFIG } from "../../config/app";
+import { useCollectionStats } from "../../hooks/useCollectionStats";
 
 export function ProfileCard() {
+  const stats = useCollectionStats();
+
   return (
     <section
       aria-label="Collector profile"
@@ -14,7 +17,7 @@ export function ProfileCard() {
           {APP_CONFIG.collector.name}
         </p>
         <p className="truncate text-[13px] text-text-secondary">
-          {APP_CONFIG.collector.progressLabel}
+          {stats.master.percentage}% Complete
         </p>
       </div>
     </section>

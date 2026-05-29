@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronDown } from "lucide-react";
 
 type DropdownSelectValue = string | number;
-type DropdownSelectVariant = "default" | "compact";
 
 export interface DropdownSelectOption<TValue extends DropdownSelectValue> {
   label: string;
@@ -17,32 +16,16 @@ interface DropdownSelectProps<TValue extends DropdownSelectValue> {
   label: string;
   onChange: (value: TValue) => void;
   options: readonly DropdownSelectOption<TValue>[];
+  showLabel?: boolean;
   value: TValue;
-  variant?: DropdownSelectVariant;
 }
 
-const dropdownSelectStyles: Record<
-  DropdownSelectVariant,
-  {
-    button: string;
-    chevron: string;
-    value: string;
-  }
-> = {
-  default: {
-    button:
-      "data-view-field relative flex items-center appearance-none rounded-button pr-10 text-left",
-    chevron:
-      "pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary",
-    value: "min-w-0 flex-1 truncate",
-  },
-  compact: {
-    button:
-      "data-view-field relative flex items-center appearance-none rounded-button pl-4 text-left text-sm 2xs:pl-3.5 lg:pl-4",
-    chevron:
-      "pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary 2xs:right-2 lg:right-3",
-    value: "min-w-0 flex-1 truncate",
-  },
+const dropdownSelectStyles = {
+  button:
+    "data-view-field relative flex items-center appearance-none rounded-button pr-10 text-left",
+  chevron:
+    "pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary",
+  value: "min-w-0 flex-1 truncate",
 };
 
 export function DropdownSelect<TValue extends DropdownSelectValue>({
@@ -51,13 +34,13 @@ export function DropdownSelect<TValue extends DropdownSelectValue>({
   label,
   onChange,
   options,
+  showLabel = false,
   value,
-  variant = "default",
 }: DropdownSelectProps<TValue>) {
   const generatedButtonId = useId();
   const optionsId = useId();
   const buttonId = id ?? generatedButtonId;
-  const styles = dropdownSelectStyles[variant];
+  const styles = dropdownSelectStyles;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -67,8 +50,7 @@ export function DropdownSelect<TValue extends DropdownSelectValue>({
     options.findIndex((option) => option.value === value),
     0,
   );
-  const selectedOption =
-    options.find((option) => option.value === value) ?? options[0];
+  const selectedOption = options.find((option) => option.value === value);
 
   useEffect(() => {
     if (isOpen && activeIndex !== null) {
@@ -240,7 +222,20 @@ export function DropdownSelect<TValue extends DropdownSelectValue>({
         onKeyDown={handleButtonKeyDown}
         onClick={toggleOptions}
       >
-        <span className={styles.value}>{selectedOption?.label ?? label}</span>
+        <span className={styles.value}>
+          {showLabel ? (
+            <span className="grid gap-1">
+              <span className="truncate text-[11px] font-semibold leading-none text-text-secondary">
+                {label}
+              </span>
+              <span className="truncate text-sm font-semibold leading-[1.2] text-text-primary">
+                {selectedOption?.label ?? label}
+              </span>
+            </span>
+          ) : (
+            (selectedOption?.label ?? label)
+          )}
+        </span>
         <ChevronDown
           aria-hidden="true"
           className={styles.chevron}
