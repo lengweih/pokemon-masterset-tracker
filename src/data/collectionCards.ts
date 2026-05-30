@@ -392,3 +392,14 @@ const comingSoonCollectionViews = new Set<CollectionViewId>(["grandmaster"]);
 
 export const isCollectionViewComingSoon = (view: CollectionViewId) =>
   comingSoonCollectionViews.has(view);
+
+// Lookup of every card across all views, keyed by id. Used by pages that work
+// from stored card ids (wishlist, card detail) rather than a specific view.
+const collectionCardsById = new Map<string, CollectionCard>(
+  Object.values(collectionCardsByView)
+    .flat()
+    .map((card) => [card.id, card]),
+);
+
+export const getCollectionCardById = (cardId: string) =>
+  collectionCardsById.get(cardId);

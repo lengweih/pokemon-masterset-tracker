@@ -6,10 +6,7 @@ import { changelogEntries } from "../data/changelog";
 
 export function ChangelogPage() {
   return (
-    <section
-      aria-labelledby="changelog-title"
-      className="grid w-full self-start gap-3"
-    >
+    <section className="grid w-full self-start gap-3">
       <PageHeader
         description="Track app improvements, collection updates, and data corrections as the master set tracker evolves."
         eyebrow="Changelog"

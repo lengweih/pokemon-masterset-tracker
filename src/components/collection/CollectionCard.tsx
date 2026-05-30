@@ -65,8 +65,7 @@ function WishlistButton({
       }
       aria-pressed={isWishlisted}
       className={[
-        "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border-strong bg-surface transition-colors duration-180 ease-premium",
-        isWishlisted ? "text-danger" : "text-text-secondary hover:text-danger",
+        "group/wishlist inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border-strong bg-surface",
         className,
       ].join(" ")}
       type="button"
@@ -74,7 +73,12 @@ function WishlistButton({
     >
       <Heart
         aria-hidden="true"
-        className={["h-4 w-4", isWishlisted ? "fill-current" : ""].join(" ")}
+        className={[
+          "h-[17px] w-[17px] transition duration-100 ease-out group-active/wishlist:scale-90",
+          isWishlisted
+            ? "fill-current text-danger"
+            : "fill-transparent text-text-secondary group-hover/wishlist:scale-110 group-hover/wishlist:fill-danger/20 group-hover/wishlist:text-danger",
+        ].join(" ")}
         strokeWidth={2}
       />
     </button>

@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { Package } from "lucide-react";
 
+import { PageHeader } from "../components/common/PageHeader";
 import { ProductCard } from "../components/product/ProductCard";
 import { ProductSummaryCard } from "../components/product/ProductSummaryCard";
 import {
@@ -108,30 +110,18 @@ export function ProductListPage() {
   };
 
   return (
-    <section
-      aria-labelledby="product-list-title"
-      className="grid w-full self-start gap-3 lg:h-full lg:min-h-0 lg:self-stretch lg:grid-rows-[auto_minmax(0,1fr)]"
-    >
-      <div className="surface-card p-6 sm:p-8">
-        <div className="max-w-3xl">
-          <p className="text-label uppercase tracking-[0.18em] text-brand-blue">
-            Product List
-          </p>
-          <h1
-            id="product-list-title"
-            className="gradient-text mt-1 text-3xl font-bold leading-tight xs:text-[38px] sm:text-[42px]"
-          >
-            Product List
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm font-medium leading-[1.6] text-text-secondary xs:text-body">
-            Browse all related products for Prismatic Evolutions.
-          </p>
-        </div>
-
-        <div className="mt-6 max-w-[270px]">
+    <section className="grid w-full self-start gap-3 lg:h-full lg:min-h-0 lg:self-stretch lg:grid-rows-[auto_minmax(0,1fr)]">
+      <PageHeader
+        description="Browse all related products for Prismatic Evolutions."
+        eyebrow="Product List"
+        icon={Package}
+        title="Product List"
+        titleId="product-list-title"
+      >
+        <div className="lg:max-w-[270px]">
           <ProductSummaryCard totalProducts={products.length} />
         </div>
-      </div>
+      </PageHeader>
 
       <div className="surface-card grid gap-5 p-4 sm:p-6 lg:min-h-0 lg:grid-rows-[auto_minmax(0,1fr)_auto]">
         <DataViewToolbar

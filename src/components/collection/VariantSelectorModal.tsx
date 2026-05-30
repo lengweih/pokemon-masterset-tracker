@@ -4,8 +4,8 @@ import { Check, X } from "lucide-react";
 import type {
   CollectionCard as CollectionCardModel,
   CollectionCardVariant,
-  CollectionVariantTone,
 } from "../../types/collection";
+import { VariantPill } from "./VariantPill";
 
 interface VariantSelectorModalProps {
   card: CollectionCardModel | null;
@@ -13,14 +13,6 @@ interface VariantSelectorModalProps {
   onClose: () => void;
   onSave: (cardId: string, variantIds: string[]) => void;
 }
-
-const variantBadgeClassByTone = {
-  base: "badge-variant",
-  holo: "badge-variant",
-  masterball: "badge-masterball",
-  pokeball: "badge-pokeball",
-  reverse: "badge-reverse",
-} satisfies Record<CollectionVariantTone, string>;
 
 const variantNameById: Record<string, string> = {
   base: "Base",
@@ -186,14 +178,10 @@ export function VariantSelectorModal({
                 htmlFor={checkboxId}
               >
                 <span className="flex min-w-0 items-center gap-4">
-                  <span
-                    className={[
-                      "inline-flex h-7 min-w-12 shrink-0 items-center justify-center rounded-pill px-3 text-tiny",
-                      variantBadgeClassByTone[variant.tone],
-                    ].join(" ")}
-                  >
-                    {variant.label}
-                  </span>
+                  <VariantPill
+                    className="min-w-12 shrink-0 justify-center"
+                    variant={variant}
+                  />
 
                   <span className="truncate text-sm font-semibold text-text-secondary">
                     {getVariantName(variant)}
