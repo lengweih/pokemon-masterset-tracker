@@ -7,16 +7,17 @@ import { ProductCard } from "../components/product/ProductCard";
 import { ProductSummaryCard } from "../components/product/ProductSummaryCard";
 import {
   DataViewToolbar,
-  type DataViewMode,
   type DataViewSortOption,
 } from "../components/ui/DataViewToolbar";
 import { Pagination } from "../components/ui/Pagination";
 import { products } from "../data/products";
 import { usePagination } from "../hooks/usePagination";
+import {
+  THREE_COLUMN_CARD_GRID,
+  useResponsiveGridPageSize,
+} from "../hooks/useResponsiveGridPageSize";
 import type { Product, ProductSortOption } from "../types/product";
 
-const DEFAULT_PRODUCTS_PER_PAGE = 8;
-const PRODUCT_PAGE_SIZE_OPTIONS = [4, 8, 12, 16] as const;
 const productViewEnterTransition = {
   duration: 0.3,
   ease: [0.64, 0, 0.78, 0],
@@ -65,8 +66,8 @@ const sortProducts = (
 export function ProductListPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState<ProductSortOption>("name-asc");
-  const [viewMode, setViewMode] = useState<DataViewMode>("grid");
-  const [pageSize, setPageSize] = useState(DEFAULT_PRODUCTS_PER_PAGE);
+  const { gridClass, pageSize } =
+    useResponsiveGridPageSize(THREE_COLUMN_CARD_GRID);
 
   const visibleProducts = useMemo(() => {
     const normalizedSearchQuery = searchQuery.trim().toLowerCase();
@@ -89,10 +90,9 @@ export function ProductListPage() {
     pageSize,
   });
   const gridPlaceholderCount =
-    viewMode === "grid" && pagination.totalPages > 1
+    pagination.totalPages > 1
       ? Math.max(pagination.pageSize - pagination.currentItems.length, 0)
       : 0;
-  const productResultsKey = `${viewMode}-${pagination.currentPage}`;
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -101,11 +101,6 @@ export function ProductListPage() {
 
   const handleSortChange = (value: ProductSortOption) => {
     setSortOption(value);
-    pagination.goToPage(1);
-  };
-
-  const handlePageSizeChange = (value: number) => {
-    setPageSize(value);
     pagination.goToPage(1);
   };
 
@@ -129,48 +124,37 @@ export function ProductListPage() {
           searchLabel="Search products"
           searchPlaceholder="Search products..."
           searchValue={searchQuery}
-          pageSizeLabel="Products per page"
-          pageSizeOptions={PRODUCT_PAGE_SIZE_OPTIONS}
-          pageSizeSelectId="product-page-size"
-          pageSizeValue={pageSize}
           sortLabel="Sort"
           sortOptions={productSortOptions}
           sortSelectId="product-sort"
           sortValue={sortOption}
-          viewMode={viewMode}
-          onPageSizeChange={handlePageSizeChange}
           onSearchChange={handleSearchChange}
           onSortChange={handleSortChange}
-          onViewModeChange={setViewMode}
         />
 
         {pagination.currentItems.length > 0 ? (
           <motion.div
-            key={productResultsKey}
+            key={pagination.currentPage}
             initial={{ opacity: 0.82 }}
             animate={{ opacity: 1 }}
-            className={
-              viewMode === "grid"
-                ? "grid min-h-0 content-start gap-3 sm:grid-cols-2 xl:grid-cols-4"
-                : "grid min-h-0 content-start gap-3"
-            }
+            className={gridClass}
             transition={productViewEnterTransition}
           >
             {pagination.currentItems.map((product) => (
               <motion.div
-                key={`${viewMode}-${product.id}`}
+                key={product.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={productViewEnterTransition}
               >
-                <ProductCard product={product} viewMode={viewMode} />
+                <ProductCard product={product} />
               </motion.div>
             ))}
             {Array.from({ length: gridPlaceholderCount }, (_, index) => (
               <div
                 key={`product-placeholder-${index}`}
                 aria-hidden="true"
-                className="invisible h-60 w-full rounded-card sm:h-64 xl:h-60"
+                className="invisible h-56 w-full rounded-card sm:h-64 xl:h-60"
               />
             ))}
           </motion.div>

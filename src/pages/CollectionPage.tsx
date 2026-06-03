@@ -2,10 +2,9 @@ import { useCallback, useMemo } from "react";
 
 import { CollectionBrowser } from "../components/collection/CollectionBrowser";
 import { CollectionHero } from "../components/collection/CollectionHero";
-import { collectionCardsByView } from "../data/collectionCards";
+import { getCollectionViewProgress } from "../data/collectionCards";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
 import {
-  getCollectionProgress,
   isCollectionPreferences,
   isOwnedVariantsByCardId,
   isStringArray,
@@ -46,11 +45,7 @@ export function CollectionPage() {
     isStringArray,
   );
   const collectionProgress = useMemo(
-    () =>
-      getCollectionProgress(
-        collectionCardsByView[activeView],
-        ownedVariantsByCardId,
-      ),
+    () => getCollectionViewProgress(activeView, ownedVariantsByCardId),
     [activeView, ownedVariantsByCardId],
   );
 

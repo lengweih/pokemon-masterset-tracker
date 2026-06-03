@@ -94,7 +94,7 @@ function PaginationItems({
             aria-current={isCurrentPage ? "page" : undefined}
             aria-label={`Page ${item}`}
             className={[
-              "flex h-8 w-7 items-center justify-center rounded-md border text-sm font-semibold 2xs:h-9 2xs:w-8",
+              "flex h-8 w-7 items-center justify-center rounded-lg border text-sm font-semibold 2xs:h-9 2xs:w-8",
               isCurrentPage
                 ? "border-transparent bg-primary text-white"
                 : "border-border-strong bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary",
@@ -141,7 +141,7 @@ export function Pagination({
       <div className="flex flex-wrap items-center justify-center gap-1 xs:gap-2 sm:justify-end">
         <button
           aria-label="Previous page"
-          className="flex h-8 w-7 items-center justify-center rounded-md border border-border-strong bg-surface text-text-secondary transition-all duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary disabled:opacity-45 2xs:h-9 2xs:w-8"
+          className="flex h-8 w-7 items-center justify-center rounded-lg border border-border-strong bg-surface text-text-secondary transition-all duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary disabled:opacity-45 2xs:h-9 2xs:w-8"
           disabled={currentPage <= 1}
           type="button"
           onClick={() => {
@@ -169,7 +169,7 @@ export function Pagination({
 
         <button
           aria-label="Next page"
-          className="flex h-8 w-7 items-center justify-center rounded-md border border-border-strong bg-surface text-text-secondary transition-all duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary disabled:opacity-45 2xs:h-9 2xs:w-8"
+          className="flex h-8 w-7 items-center justify-center rounded-lg border border-border-strong bg-surface text-text-secondary transition-all duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary disabled:opacity-45 2xs:h-9 2xs:w-8"
           disabled={currentPage >= totalPages}
           type="button"
           onClick={() => {

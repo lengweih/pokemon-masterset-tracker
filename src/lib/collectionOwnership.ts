@@ -6,14 +6,19 @@ import type {
   OwnedVariantsByCardId,
 } from "../types/collection";
 
-const collectionViewIds: readonly CollectionViewId[] = ["master", "grandmaster"];
+const collectionViewIds: readonly CollectionViewId[] = [
+  "master",
+  "grandmaster",
+];
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 };
 
 export const isStringArray = (value: unknown): value is string[] => {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
 };
 
 export const isOwnedVariantsByCardId = (
@@ -50,6 +55,56 @@ export const getOwnedVariantCount = (
   return getOwnedVariantIds(card, ownedVariantsByCardId).length;
 };
 
+// Returns the next ownership map with `variantId` toggled for `cardId`. Cards
+// with no owned variants are removed so the store stays tidy.
+export const toggleVariantOwnership = (
+  ownedVariantsByCardId: OwnedVariantsByCardId,
+  cardId: string,
+  variantId: string,
+): OwnedVariantsByCardId => {
+  const currentOwned = ownedVariantsByCardId[cardId] ?? [];
+  const nextOwned = currentOwned.includes(variantId)
+    ? currentOwned.filter((id) => id !== variantId)
+    : [...currentOwned, variantId];
+
+  return setCardOwnership(ownedVariantsByCardId, cardId, nextOwned);
+};
+
+// Returns the next ownership map after marking/clearing all of `setVariantIds`
+// for `cardId`, while preserving owned variants outside that set. Used by the
+// per-tab "mark all / clear all" so editing one set doesn't wipe the other.
+export const setVariantSetOwnership = (
+  ownedVariantsByCardId: OwnedVariantsByCardId,
+  cardId: string,
+  setVariantIds: readonly string[],
+  isOwned: boolean,
+): OwnedVariantsByCardId => {
+  const setVariantIdSet = new Set(setVariantIds);
+  const current = ownedVariantsByCardId[cardId] ?? [];
+  const outsideSet = current.filter((id) => !setVariantIdSet.has(id));
+  const nextOwned = isOwned ? [...outsideSet, ...setVariantIds] : outsideSet;
+
+  return setCardOwnership(ownedVariantsByCardId, cardId, nextOwned);
+};
+
+// Returns the next ownership map with `cardId` set to exactly `variantIds`
+// (empty clears the card).
+const setCardOwnership = (
+  ownedVariantsByCardId: OwnedVariantsByCardId,
+  cardId: string,
+  variantIds: readonly string[],
+): OwnedVariantsByCardId => {
+  const next = { ...ownedVariantsByCardId };
+
+  if (variantIds.length > 0) {
+    next[cardId] = [...variantIds];
+  } else {
+    delete next[cardId];
+  }
+
+  return next;
+};
+
 export const getCardCompletion = (
   card: CollectionCard,
   ownedVariantsByCardId: OwnedVariantsByCardId,
@@ -58,7 +113,9 @@ export const getCardCompletion = (
     return 0;
   }
 
-  return getOwnedVariantCount(card, ownedVariantsByCardId) / card.variants.length;
+  return (
+    getOwnedVariantCount(card, ownedVariantsByCardId) / card.variants.length
+  );
 };
 
 export const getCollectionProgress = (

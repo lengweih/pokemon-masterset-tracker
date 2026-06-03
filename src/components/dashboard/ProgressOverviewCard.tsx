@@ -1,7 +1,7 @@
 import { ChartNoAxesCombined } from "lucide-react";
 
 import { getDashboardProgressItems } from "../../data/dashboard";
-import { useCollectionStats } from "../../hooks/useCollectionStats";
+import { useCollectionStats } from "../../contexts/CollectionStatsContext";
 import { DashboardCardHeader } from "./DashboardCardHeader";
 
 export function ProgressOverviewCard() {

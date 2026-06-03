@@ -1,5 +1,3 @@
-import type { AppRoute } from "../routes/paths";
-
 export type DashboardSummaryStatIcon =
   | "award"
   | "clipboard-check"
@@ -23,12 +21,19 @@ export interface DashboardProgressItem {
   width: string;
 }
 
-export type DashboardQuickActionIcon = "cloud-upload" | "search" | "square-plus";
+export type DashboardQuickActionIcon = "download" | "search" | "upload";
+
+export type DashboardQuickActionKind =
+  | "import-collection"
+  | "export-backup"
+  | "link";
 
 export interface DashboardQuickAction {
   description: string;
-  href: AppRoute;
   icon: DashboardQuickActionIcon;
   iconColor: string;
+  kind: DashboardQuickActionKind;
   label: string;
+  // Only used when kind is "link".
+  href?: string;
 }

@@ -35,7 +35,7 @@ export const getDashboardSummaryStats = (
     iconBackground: "#E8FAF2",
     label: "Cards Owned",
     value: `${stats.cardsOwned}`,
-    supportingText: `${stats.cardsOwned} unique cards`,
+    supportingText: `${stats.master.collected} unique variants`,
   },
   {
     color: "#F43F5E",
@@ -74,24 +74,25 @@ export const getDashboardProgressItems = (
 
 export const dashboardQuickActions: DashboardQuickAction[] = [
   {
-    description: "Add cards to your collection",
-    href: ROUTES.collection,
-    icon: "square-plus",
+    description: "Load a saved collection",
+    icon: "upload",
     iconColor: "#7B61FF",
-    label: "Quick Add",
+    kind: "import-collection",
+    label: "Import Collection",
   },
   {
-    description: "Save your collection data",
-    href: ROUTES.home,
-    icon: "cloud-upload",
+    description: "Download your collection",
+    icon: "download",
     iconColor: "#7B61FF",
+    kind: "export-backup",
     label: "Export Backup",
   },
   {
-    description: "See all missing cards & variants",
-    href: ROUTES.collection,
+    description: "See all missing cards",
+    href: `${ROUTES.collection}?ownership=missing`,
     icon: "search",
     iconColor: "#2F80FF",
-    label: "View Needed Cards",
+    kind: "link",
+    label: "View Missing Cards",
   },
 ];

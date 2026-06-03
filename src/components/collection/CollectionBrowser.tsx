@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 
 import {
   DataViewToolbar,
@@ -15,9 +16,15 @@ import {
 } from "../../data/collectionCards";
 import { usePagination } from "../../hooks/usePagination";
 import {
+  FOUR_COLUMN_CARD_GRID,
+  useResponsiveGridPageSize,
+} from "../../hooks/useResponsiveGridPageSize";
+import {
   getCardCompletion,
   getOwnedVariantCount,
   getOwnedVariantIds,
+  setVariantSetOwnership,
+  toggleVariantOwnership,
 } from "../../lib/collectionOwnership";
 import type {
   CollectionCard as CollectionCardModel,
@@ -49,28 +56,9 @@ interface CollectionBrowserProps {
   onWishlistCardIdsChange: CollectionStateSetter<string[]>;
 }
 
-const COLLECTION_GRID_ROWS_PER_PAGE = 3;
-const COLLECTION_MOBILE_GRID_ROWS_PER_PAGE = 2;
 const COLLECTION_GRID_CARD_FRAME_CLASS =
   "mx-auto aspect-[63/88] w-full max-w-[280px] rounded-md";
 
-const COLLECTION_GRID_COLUMN_BREAKPOINTS = [
-  { columns: 4, minWidth: 960 },
-  { columns: 3, minWidth: 640 },
-] as const;
-const COLLECTION_GRID_DEFAULT_COLUMN_COUNT = 2;
-
-const getViewportColumnCount = () => {
-  if (typeof window === "undefined") {
-    return COLLECTION_GRID_DEFAULT_COLUMN_COUNT;
-  }
-
-  const match = COLLECTION_GRID_COLUMN_BREAKPOINTS.find(
-    ({ minWidth }) => window.matchMedia(`(min-width: ${minWidth}px)`).matches,
-  );
-
-  return match?.columns ?? COLLECTION_GRID_DEFAULT_COLUMN_COUNT;
-};
 const collectionViewEnterTransition = {
   duration: 0.3,
   ease: [0.64, 0, 0.78, 0],
@@ -145,6 +133,19 @@ const ownershipFilterOptions = [
     value: "missing",
   },
 ] satisfies readonly { label: string; value: CollectionOwnershipFilter }[];
+
+const ownershipFilterValues = ownershipFilterOptions.map(
+  (option) => option.value,
+);
+
+// Lets the dashboard deep-link to a pre-applied ownership filter via the
+// `ownership` query param (e.g. the "Missing Cards" / "View Missing Cards" CTAs).
+const parseOwnershipFilterParam = (
+  value: string | null,
+): CollectionOwnershipFilter =>
+  ownershipFilterValues.includes(value as CollectionOwnershipFilter)
+    ? (value as CollectionOwnershipFilter)
+    : "all";
 
 const collectionSortOptions = [
   {
@@ -237,16 +238,6 @@ const sortCollectionCards = (
   });
 };
 
-const getGridPageSize = (columnCount: number) => {
-  const normalizedColumnCount = Math.max(columnCount, 2);
-  const rowCount =
-    normalizedColumnCount <= 2
-      ? COLLECTION_MOBILE_GRID_ROWS_PER_PAGE
-      : COLLECTION_GRID_ROWS_PER_PAGE;
-
-  return normalizedColumnCount * rowCount;
-};
-
 export function CollectionBrowser({
   activeView,
   ownedVariantsByCardId,
@@ -255,21 +246,23 @@ export function CollectionBrowser({
   onOwnedVariantsChange,
   onWishlistCardIdsChange,
 }: CollectionBrowserProps) {
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [rarityFilter, setRarityFilter] =
     useState<CollectionRarityFilter>("all");
   const [typeFilter, setTypeFilter] = useState<CollectionTypeFilter>("all");
   const [ownershipFilter, setOwnershipFilter] =
-    useState<CollectionOwnershipFilter>("all");
+    useState<CollectionOwnershipFilter>(() =>
+      parseOwnershipFilterParam(searchParams.get("ownership")),
+    );
   const [sortOption, setSortOption] =
     useState<CollectionSortOption>("number-asc");
   const [editingCard, setEditingCard] = useState<CollectionCardModel | null>(
     null,
   );
-  const [gridColumnCount, setGridColumnCount] = useState(
-    getViewportColumnCount,
+  const { gridClass, pageSize } = useResponsiveGridPageSize(
+    FOUR_COLUMN_CARD_GRID,
   );
-  const pageSize = getGridPageSize(gridColumnCount);
   const isComingSoon = isCollectionViewComingSoon(activeView);
   const activeCards = collectionCardsByView[activeView];
   const wishlistCardIdSet = useMemo(
@@ -400,40 +393,34 @@ export function CollectionBrowser({
     });
   };
 
-  const handleVariantSave = (cardId: string, variantIds: string[]) => {
-    onOwnedVariantsChange((currentOwnedVariantsByCardId) => {
-      const nextOwnedVariantsByCardId = { ...currentOwnedVariantsByCardId };
+  const handleToggleVariant = (variantId: string) => {
+    if (!editingCard) {
+      return;
+    }
 
-      if (variantIds.length > 0) {
-        nextOwnedVariantsByCardId[cardId] = variantIds;
-      } else {
-        delete nextOwnedVariantsByCardId[cardId];
-      }
-
-      return nextOwnedVariantsByCardId;
-    });
-    setEditingCard(null);
+    const cardId = editingCard.id;
+    onOwnedVariantsChange((current) =>
+      toggleVariantOwnership(current, cardId, variantId),
+    );
   };
 
-  useEffect(() => {
-    const updateColumnCount = () => {
-      setGridColumnCount(getViewportColumnCount());
-    };
+  const handleSetAllOwned = (owned: boolean) => {
+    if (!editingCard) {
+      return;
+    }
 
-    const mediaQueries = COLLECTION_GRID_COLUMN_BREAKPOINTS.map(
-      ({ minWidth }) => window.matchMedia(`(min-width: ${minWidth}px)`),
+    const { id: cardId, variants } = editingCard;
+    // `editingCard` is projected to the active set, so this only marks/clears
+    // that set's variants and preserves the other set's ownership.
+    onOwnedVariantsChange((current) =>
+      setVariantSetOwnership(
+        current,
+        cardId,
+        variants.map((variant) => variant.id),
+        owned,
+      ),
     );
-
-    mediaQueries.forEach((mediaQuery) => {
-      mediaQuery.addEventListener("change", updateColumnCount);
-    });
-
-    return () => {
-      mediaQueries.forEach((mediaQuery) => {
-        mediaQuery.removeEventListener("change", updateColumnCount);
-      });
-    };
-  }, []);
+  };
 
   const collectionFilters = [
     <DropdownSelect
@@ -515,7 +502,7 @@ export function CollectionBrowser({
                   key={collectionGridKey}
                   initial={{ opacity: 0.82 }}
                   animate={{ opacity: 1 }}
-                  className="grid min-h-0 grid-cols-2 content-start gap-3 sm:grid-cols-3 min-[960px]:grid-cols-4"
+                  className={gridClass}
                   transition={collectionViewEnterTransition}
                 >
                   {pagination.currentItems.map((card) => (
@@ -592,7 +579,8 @@ export function CollectionBrowser({
         onClose={() => {
           setEditingCard(null);
         }}
-        onSave={handleVariantSave}
+        onSetAllOwned={handleSetAllOwned}
+        onToggleVariant={handleToggleVariant}
       />
     </>
   );

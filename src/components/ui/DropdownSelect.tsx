@@ -248,7 +248,7 @@ export function DropdownSelect<TValue extends DropdownSelectValue>({
           <motion.div
             id={optionsId}
             aria-labelledby={buttonId}
-            className="surface-card absolute left-0 right-0 top-full z-20 mt-2 grid origin-top gap-1 rounded-button p-2"
+            className="surface-card absolute left-0 right-0 top-full z-30 mt-2 grid origin-top gap-1 rounded-button p-2"
             role="listbox"
             initial={{
               clipPath: "inset(0 0 100% 0 round 14px)",

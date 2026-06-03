@@ -13,10 +13,17 @@ import { Pagination } from "../components/ui/Pagination";
 import { getCollectionCardById } from "../data/collectionCards";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
 import { usePagination } from "../hooks/usePagination";
-import { isStringArray } from "../lib/collectionOwnership";
+import {
+  getOwnedVariantIds,
+  isOwnedVariantsByCardId,
+  isStringArray,
+} from "../lib/collectionOwnership";
 import { STORAGE_KEYS } from "../lib/storageKeys";
 import { ROUTES } from "../routes/paths";
-import type { CollectionCard } from "../types/collection";
+import type {
+  CollectionCard,
+  OwnedVariantsByCardId,
+} from "../types/collection";
 
 type WishlistSortOption =
   | "recently-added"
@@ -89,6 +96,11 @@ export function WishlistPage() {
     STORAGE_KEYS.wishlist,
     [],
     isStringArray,
+  );
+  const [ownedVariantsByCardId] = useLocalStorageState<OwnedVariantsByCardId>(
+    STORAGE_KEYS.collection,
+    {},
+    isOwnedVariantsByCardId,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] =
@@ -189,7 +201,14 @@ export function WishlistPage() {
                   animate={{ opacity: 1 }}
                   transition={wishlistViewEnterTransition}
                 >
-                  <WishlistCard card={card} onRemove={handleRemoveFromWishlist} />
+                  <WishlistCard
+                    card={card}
+                    ownedVariantIds={getOwnedVariantIds(
+                      card,
+                      ownedVariantsByCardId,
+                    )}
+                    onRemove={handleRemoveFromWishlist}
+                  />
                 </motion.div>
               ))}
             </motion.div>

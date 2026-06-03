@@ -1,44 +1,52 @@
 import { images } from "../assets/images";
+import { getCollectionProgress } from "../lib/collectionOwnership";
 import type {
   CollectionCard,
   CollectionCardRarity,
   CollectionCardType,
   CollectionCardVariant,
+  CollectionVariantSet,
   CollectionViewId,
+  OwnedVariantsByCardId,
 } from "../types/collection";
 
-const baseVariant = {
-  id: "base",
-  label: "Base",
-  tone: "base",
+const nonHoloVariant = {
+  id: "non-holo",
+  label: "NH",
+  tone: "default",
+  set: "master",
 } satisfies CollectionCardVariant;
 
 const reverseHoloVariant = {
   id: "reverse-holo",
   label: "RH",
   tone: "reverse",
+  set: "master",
 } satisfies CollectionCardVariant;
 
 const holoVariant = {
   id: "holo",
-  label: "Holo",
+  label: "H",
   tone: "holo",
+  set: "master",
 } satisfies CollectionCardVariant;
 
 const pokeBallVariant = {
   id: "poke-ball",
   label: "PB",
   tone: "pokeball",
+  set: "master",
 } satisfies CollectionCardVariant;
 
 const masterBallVariant = {
   id: "master-ball",
   label: "MB",
   tone: "masterball",
+  set: "master",
 } satisfies CollectionCardVariant;
 
 const standardPokemonVariants = [
-  baseVariant,
+  nonHoloVariant,
   reverseHoloVariant,
   pokeBallVariant,
   masterBallVariant,
@@ -52,7 +60,7 @@ const holoPokemonVariants = [
 ] satisfies readonly CollectionCardVariant[];
 
 const standardTrainerVariants = [
-  baseVariant,
+  nonHoloVariant,
   reverseHoloVariant,
   pokeBallVariant,
 ] satisfies readonly CollectionCardVariant[];
@@ -60,6 +68,104 @@ const standardTrainerVariants = [
 const foilOnlyVariants = [
   holoVariant,
 ] satisfies readonly CollectionCardVariant[];
+
+// Grandmaster (outside-pack / promo) variants. All share the neutral
+// "grandmaster" tone for now and render as fallback label pills until each has
+// its own icon. Full names live in `variantDisplay.ts`.
+const makeGrandmasterVariant = (id: string, label: string) =>
+  ({ id, label, tone: "grandmaster", set: "grandmaster" }) satisfies CollectionCardVariant;
+
+const cosmosHoloVariant = makeGrandmasterVariant("cosmos-holo", "Cosmos");
+const expansionStampVariant = makeGrandmasterVariant("expansion-stamp", "Stamp");
+const expansionStampJumboVariant = makeGrandmasterVariant(
+  "expansion-stamp-jumbo",
+  "Stamp J",
+);
+const expansionStampAltVariant = makeGrandmasterVariant(
+  "expansion-stamp-alt",
+  "Stamp A",
+);
+const expansionStampJumboAltVariant = makeGrandmasterVariant(
+  "expansion-stamp-jumbo-alt",
+  "Stamp JA",
+);
+const playPokemonVariant = makeGrandmasterVariant("play-pokemon", "Play");
+const playPokemonCosmosVariant = makeGrandmasterVariant(
+  "play-pokemon-cosmos",
+  "Play CH",
+);
+const pokemonTcgGymVariant = makeGrandmasterVariant("pokemon-tcg-gym", "Gym");
+const premierBallLeagueVariant = makeGrandmasterVariant(
+  "premier-ball-league",
+  "PBL",
+);
+const premierBallLeagueJudgeVariant = makeGrandmasterVariant(
+  "premier-ball-league-judge",
+  "PBL J",
+);
+const holidayCalendarVariant = makeGrandmasterVariant(
+  "holiday-calendar",
+  "Holiday",
+);
+const pokemonDayVariant = makeGrandmasterVariant("pokemon-day", "Poké Day");
+const jumboVariant = makeGrandmasterVariant("jumbo", "Jumbo");
+const professorProgramVariant = makeGrandmasterVariant(
+  "professor-program",
+  "Prof",
+);
+
+// Grandmaster variants per master-set card number (from the grandmaster-set
+// reference). The SVP black-star promos (#167–176) are intentionally omitted —
+// they are new cards that need their own images/IDs.
+const grandmasterVariantsByNumber: Record<
+  string,
+  readonly CollectionCardVariant[]
+> = {
+  "004": [
+    playPokemonVariant,
+    playPokemonCosmosVariant,
+    pokemonTcgGymVariant,
+    premierBallLeagueVariant,
+    premierBallLeagueJudgeVariant,
+  ],
+  "005": [cosmosHoloVariant],
+  "006": [expansionStampVariant, playPokemonVariant],
+  "013": [cosmosHoloVariant],
+  "014": [expansionStampVariant, playPokemonVariant],
+  "022": [cosmosHoloVariant],
+  "023": [expansionStampVariant, playPokemonVariant],
+  "025": [cosmosHoloVariant],
+  "026": [expansionStampVariant, holidayCalendarVariant, playPokemonVariant],
+  "029": [cosmosHoloVariant],
+  "030": [expansionStampVariant, playPokemonVariant],
+  "033": [cosmosHoloVariant],
+  "034": [expansionStampVariant, playPokemonVariant],
+  "040": [cosmosHoloVariant, pokemonDayVariant],
+  "041": [expansionStampVariant],
+  "051": [expansionStampVariant, expansionStampJumboVariant],
+  "059": [cosmosHoloVariant],
+  "060": [expansionStampVariant, playPokemonVariant],
+  "064": [expansionStampVariant],
+  "073": [jumboVariant],
+  "074": [pokemonDayVariant],
+  "075": [expansionStampVariant, playPokemonVariant],
+  "076": [expansionStampVariant, expansionStampJumboVariant],
+  "082": [
+    expansionStampVariant,
+    expansionStampAltVariant,
+    expansionStampJumboVariant,
+    expansionStampJumboAltVariant,
+  ],
+  "086": [playPokemonVariant, pokemonTcgGymVariant],
+  "109": [professorProgramVariant],
+  "116": [playPokemonVariant],
+  "122": [professorProgramVariant],
+  "123": [professorProgramVariant],
+  "124": [professorProgramVariant],
+  "125": [professorProgramVariant],
+  "129": [playPokemonVariant],
+  "135": [professorProgramVariant],
+};
 
 const masterSetFoilOnlyRarities = new Set<CollectionCardRarity>([
   "ace-spec-rare",
@@ -342,13 +448,19 @@ const masterSetCardData = [
   ["180", "Terapagos ex", "hyper-rare", "colorless"],
 ] satisfies readonly MasterSetCardData[];
 
-const createMasterSetCard = (
-  [number, name, rarity, type]: MasterSetCardData,
-  variants: readonly CollectionCardVariant[] = getMasterSetVariants(
-    rarity,
-    type,
-  ),
-) => {
+const createMasterSetCard = ([
+  number,
+  name,
+  rarity,
+  type,
+]: MasterSetCardData) => {
+  // Each card carries all its variants — master (booster-pack) plus any
+  // grandmaster (promo) variants. Views project to a single set below.
+  const variants = [
+    ...getMasterSetVariants(rarity, type),
+    ...(grandmasterVariantsByNumber[number] ?? []),
+  ];
+
   return createCollectionCard({
     id: `pre-${number}`,
     name,
@@ -378,28 +490,68 @@ const getMasterSetVariants = (
   return standardPokemonVariants;
 };
 
+// Single source of truth: every card with its full variant list (master +
+// grandmaster). Used by pages that work from stored card ids (wishlist, card
+// detail) where the whole card matters.
+const allCollectionCards = masterSetCardData.map((card) =>
+  createMasterSetCard(card),
+);
+
+// Returns a copy of the card with variants filtered to one set.
+const projectCardToSet = (
+  card: CollectionCard,
+  set: CollectionVariantSet,
+): CollectionCard => ({
+  ...card,
+  variants: card.variants.filter((variant) => variant.set === set),
+});
+
+// A view shows only cards that have at least one variant of that set, each
+// projected to that set's variants.
+const cardsForSet = (set: CollectionVariantSet): readonly CollectionCard[] =>
+  allCollectionCards
+    .filter((card) => card.variants.some((variant) => variant.set === set))
+    .map((card) => projectCardToSet(card, set));
+
 export const collectionCardsByView = {
-  master: masterSetCardData.map((card) => createMasterSetCard(card)),
-  // Grandmaster set is not modelled yet. Keeping it empty avoids reusing the
-  // master set's card IDs, which would otherwise share ownership/wishlist data.
-  // To enable it later: populate this array with grandmaster cards (using
-  // distinct IDs) and remove the view from `comingSoonCollectionViews` below.
-  grandmaster: [] as readonly CollectionCard[],
+  master: cardsForSet("master"),
+  grandmaster: cardsForSet("grandmaster"),
 } satisfies Record<CollectionViewId, readonly CollectionCard[]>;
 
 // Views listed here render a "coming soon" placeholder instead of the browser.
-const comingSoonCollectionViews = new Set<CollectionViewId>(["grandmaster"]);
+// Currently empty — both master and grandmaster are live.
+const comingSoonCollectionViews = new Set<CollectionViewId>([]);
 
 export const isCollectionViewComingSoon = (view: CollectionViewId) =>
   comingSoonCollectionViews.has(view);
 
-// Lookup of every card across all views, keyed by id. Used by pages that work
-// from stored card ids (wishlist, card detail) rather than a specific view.
 const collectionCardsById = new Map<string, CollectionCard>(
-  Object.values(collectionCardsByView)
-    .flat()
-    .map((card) => [card.id, card]),
+  allCollectionCards.map((card) => [card.id, card]),
 );
 
 export const getCollectionCardById = (cardId: string) =>
   collectionCardsById.get(cardId);
+
+// Previous/next cards in set order, for card detail navigation.
+export const getCollectionCardNeighbors = (cardId: string) => {
+  const index = allCollectionCards.findIndex((card) => card.id === cardId);
+
+  return {
+    previousCard: index > 0 ? allCollectionCards[index - 1] : undefined,
+    nextCard:
+      index >= 0 && index < allCollectionCards.length - 1
+        ? allCollectionCards[index + 1]
+        : undefined,
+  };
+};
+
+// Progress scope per view: master counts master variants; grandmaster is the
+// full set — every master + grandmaster variant. (SVP promos #167–176 are not
+// modelled yet, so the grandmaster total excludes them until added.)
+export const getCollectionViewProgress = (
+  view: CollectionViewId,
+  ownedVariantsByCardId: OwnedVariantsByCardId,
+) =>
+  view === "grandmaster"
+    ? getCollectionProgress(allCollectionCards, ownedVariantsByCardId)
+    : getCollectionProgress(collectionCardsByView.master, ownedVariantsByCardId);

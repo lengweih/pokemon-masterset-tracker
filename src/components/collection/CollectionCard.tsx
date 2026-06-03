@@ -1,7 +1,8 @@
-import { Heart, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import type { CollectionCard as CollectionCardModel } from "../../types/collection";
+import { WishlistButton } from "./WishlistButton";
 
 interface CollectionCardProps {
   card: CollectionCardModel;
@@ -33,54 +34,14 @@ function CollectionEditButton({
     <button
       aria-label={`${actionLabel} variants for ${card.name}`}
       className={[
-        "inline-flex h-9 items-center justify-center gap-2 rounded-button border border-border-strong bg-surface px-4 text-sm font-semibold text-primary transition-colors duration-180 ease-premium hover:bg-primary-light",
+        "inline-flex h-9 min-w-0 items-center justify-center gap-2 rounded-button border border-border-strong bg-surface px-3 text-xs font-semibold text-primary transition-colors duration-180 ease-premium hover:bg-primary-light xs:px-4 xs:text-sm",
         className,
       ].join(" ")}
       type="button"
       onClick={onClick}
     >
-      <Pencil aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
+      <Pencil aria-hidden="true" className="h-4 w-4 shrink-0" strokeWidth={2} />
       {actionLabel}
-    </button>
-  );
-}
-
-function WishlistButton({
-  card,
-  className = "",
-  isWishlisted,
-  onClick,
-}: {
-  card: CollectionCardModel;
-  className?: string;
-  isWishlisted: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      aria-label={
-        isWishlisted
-          ? `Remove ${card.name} from wishlist`
-          : `Add ${card.name} to wishlist`
-      }
-      aria-pressed={isWishlisted}
-      className={[
-        "group/wishlist inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border-strong bg-surface",
-        className,
-      ].join(" ")}
-      type="button"
-      onClick={onClick}
-    >
-      <Heart
-        aria-hidden="true"
-        className={[
-          "h-[17px] w-[17px] transition duration-100 ease-out group-active/wishlist:scale-90",
-          isWishlisted
-            ? "fill-current text-danger"
-            : "fill-transparent text-text-secondary group-hover/wishlist:scale-110 group-hover/wishlist:fill-danger/20 group-hover/wishlist:text-danger",
-        ].join(" ")}
-        strokeWidth={2}
-      />
     </button>
   );
 }
@@ -129,30 +90,27 @@ export function CollectionCard({
           pokemonCardLayerClass,
         ].join(" ")}
       >
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 text-white">
-            <p className="text-xs font-semibold leading-none text-white/75">
-              #{card.number}
-            </p>
-            <h2
-              className="mt-1 truncate text-sm font-semibold leading-[1.25] text-white"
-              title={card.name}
-            >
-              {card.name}
-            </h2>
-          </div>
+        <div className="min-w-0 text-white">
+          <p className="text-xs font-semibold leading-none text-white/75">
+            #{card.number}
+          </p>
+          <h2
+            className="mt-1 truncate text-sm font-semibold leading-[1.25] text-white"
+            title={card.name}
+          >
+            {card.name}
+          </h2>
+        </div>
 
+        <div className="pointer-events-none grid w-full gap-2 group-focus-within:pointer-events-auto group-hover:pointer-events-auto">
           <WishlistButton
-            card={card}
-            className="pointer-events-none group-focus-within:pointer-events-auto group-hover:pointer-events-auto"
+            cardName={card.name}
+            className="h-9 w-full min-w-0 px-3 text-xs xs:px-4 xs:text-sm"
             isWishlisted={isWishlisted}
             onClick={() => {
               onWishlistToggle(card.id);
             }}
           />
-        </div>
-
-        <div className="pointer-events-none grid w-full gap-2 group-focus-within:pointer-events-auto group-hover:pointer-events-auto">
           <CollectionEditButton
             card={card}
             className="w-full"

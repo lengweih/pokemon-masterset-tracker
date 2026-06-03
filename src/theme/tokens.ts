@@ -48,7 +48,7 @@ export const designTokens = {
       track: "#E9ECF3",
     },
     variant: {
-      base: {
+      default: {
         bg: "#F3F4F6",
         text: "#64748B",
       },

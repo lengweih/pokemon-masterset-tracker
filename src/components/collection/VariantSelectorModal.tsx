@@ -1,45 +1,28 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, X } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { X } from "lucide-react";
 
-import type {
-  CollectionCard as CollectionCardModel,
-  CollectionCardVariant,
-} from "../../types/collection";
-import { VariantPill } from "./VariantPill";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
+import type { CollectionCard as CollectionCardModel } from "../../types/collection";
+import { VariantOwnershipRow } from "./VariantOwnershipRow";
 
 interface VariantSelectorModalProps {
   card: CollectionCardModel | null;
   ownedVariantIds: readonly string[];
+  onToggleVariant: (variantId: string) => void;
+  onSetAllOwned: (owned: boolean) => void;
   onClose: () => void;
-  onSave: (cardId: string, variantIds: string[]) => void;
 }
-
-const variantNameById: Record<string, string> = {
-  base: "Base",
-  holo: "Holo",
-  "master-ball": "Master Ball",
-  "poke-ball": "Poké Ball",
-  "reverse-holo": "Reverse Holo",
-} satisfies Record<string, string>;
-
-const getVariantName = (variant: CollectionCardVariant) => {
-  return variantNameById[variant.id] ?? variant.label;
-};
 
 export function VariantSelectorModal({
   card,
   ownedVariantIds,
+  onToggleVariant,
+  onSetAllOwned,
   onClose,
-  onSave,
 }: VariantSelectorModalProps) {
-  const [selectedVariantIds, setSelectedVariantIds] = useState<string[]>(() => [
-    ...ownedVariantIds,
-  ]);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const selectedVariantIdSet = useMemo(
-    () => new Set(selectedVariantIds),
-    [selectedVariantIds],
-  );
+
+  useBodyScrollLock(Boolean(card));
 
   useEffect(() => {
     if (!card) {
@@ -66,35 +49,12 @@ export function VariantSelectorModal({
     return null;
   }
 
-  const allVariantsSelected =
-    card.variants.length > 0 &&
-    card.variants.every((variant) => selectedVariantIdSet.has(variant.id));
-
-  const handleToggleAllVariants = () => {
-    setSelectedVariantIds(
-      allVariantsSelected ? [] : card.variants.map((variant) => variant.id),
-    );
-  };
-
-  const handleVariantToggle = (variantId: string) => {
-    setSelectedVariantIds((currentVariantIds) => {
-      if (currentVariantIds.includes(variantId)) {
-        return currentVariantIds.filter(
-          (currentVariantId) => currentVariantId !== variantId,
-        );
-      }
-
-      return [...currentVariantIds, variantId];
-    });
-  };
-
-  const handleSave = () => {
-    const validVariantIds = card.variants
-      .map((variant) => variant.id)
-      .filter((variantId) => selectedVariantIdSet.has(variantId));
-
-    onSave(card.id, validVariantIds);
-  };
+  const ownedVariantIdSet = new Set(ownedVariantIds);
+  const ownedCount = ownedVariantIdSet.size;
+  const totalCount = card.variants.length;
+  const completionPercentage =
+    totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
+  const allOwned = totalCount > 0 && ownedCount === totalCount;
 
   return (
     <div
@@ -109,21 +69,47 @@ export function VariantSelectorModal({
       <section
         aria-labelledby="variant-selector-title"
         aria-modal="true"
-        className="modal-panel p-5 xs:p-7"
+        className="modal-panel max-h-[calc(100vh-2rem)] overflow-y-auto p-5 xs:p-7"
         role="dialog"
       >
-        <div className="flex items-center justify-between gap-4">
-          <h2
-            id="variant-selector-title"
-            className="text-[22px] font-semibold leading-tight text-text-primary"
-          >
-            Edit Variants
-          </h2>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 items-start gap-4">
+            <img
+              alt={card.imageAlt}
+              className="aspect-[63/88] w-16 shrink-0 rounded-md object-cover shadow-soft-sm"
+              decoding="async"
+              loading="lazy"
+              src={card.imageUrl}
+            />
+
+            <div className="min-w-0">
+              <p className="text-label uppercase tracking-[0.18em] text-brand-blue">
+                Prismatic Evolutions
+              </p>
+              <h2
+                id="variant-selector-title"
+                className="mt-1 text-xl font-bold leading-tight text-text-primary"
+              >
+                {card.name}
+              </h2>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className="badge bg-surface-secondary text-text-secondary">
+                  #{card.number}
+                </span>
+                <span className="badge bg-surface-secondary text-text-secondary">
+                  {card.rarityLabel}
+                </span>
+                <span className="badge bg-surface-secondary text-text-secondary">
+                  {card.typeLabel}
+                </span>
+              </div>
+            </div>
+          </div>
 
           <button
             ref={closeButtonRef}
             aria-label="Close variant selector"
-            className="flex h-9 w-9 items-center justify-center rounded-button text-text-secondary transition-colors duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-button text-text-secondary transition-colors duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary"
             type="button"
             onClick={onClose}
           >
@@ -131,108 +117,52 @@ export function VariantSelectorModal({
           </button>
         </div>
 
-        <div className="mt-6 flex items-center gap-4">
-          <img
-            alt={card.imageAlt}
-            className="aspect-[63/88] w-16 shrink-0 rounded-md object-cover shadow-soft-sm"
-            decoding="async"
-            loading="lazy"
-            src={card.imageUrl}
-          />
-
-          <div className="min-w-0">
-            <p className="text-card text-text-primary">
-              #{card.number} {card.name}
-            </p>
-            <p className="mt-1 text-sm font-semibold text-primary">
-              {card.rarityLabel}
-            </p>
+        <div className="mt-6">
+          <div className="flex items-center justify-between text-[13px] font-semibold text-text-secondary">
+            <span>Variants owned</span>
+            <span className="tabular-nums text-text-primary">
+              {ownedCount} / {totalCount}
+            </span>
+          </div>
+          <div className="progress-track mt-2">
+            <div
+              className="progress-fill"
+              style={{ width: `${completionPercentage}%` }}
+            />
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-between gap-3">
-          <span className="text-sm font-semibold text-text-secondary">
-            Variants
-          </span>
+        <div className="mt-6 flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold text-text-secondary">Variants</h3>
           <button
             className="rounded-button text-sm font-semibold text-primary transition-colors duration-180 ease-premium hover:text-primary-hover"
             type="button"
-            onClick={handleToggleAllVariants}
+            onClick={() => {
+              onSetAllOwned(!allOwned);
+            }}
           >
-            {allVariantsSelected ? "Clear all" : "Select all"}
+            {allOwned ? "Clear all" : "Mark all owned"}
           </button>
         </div>
 
         <div className="mt-3 grid gap-2.5">
-          {card.variants.map((variant) => {
-            const isSelected = selectedVariantIdSet.has(variant.id);
-            const checkboxId = `${card.id}-${variant.id}`;
-
-            return (
-              <label
-                key={variant.id}
-                className={[
-                  "flex min-h-12 cursor-pointer items-center justify-between gap-4 rounded-button border bg-surface px-3 transition-colors duration-180 ease-premium hover:bg-surface-hover",
-                  isSelected ? "border-primary/40" : "border-border-strong",
-                ].join(" ")}
-                htmlFor={checkboxId}
-              >
-                <span className="flex min-w-0 items-center gap-4">
-                  <VariantPill
-                    className="min-w-12 shrink-0 justify-center"
-                    variant={variant}
-                  />
-
-                  <span className="truncate text-sm font-semibold text-text-secondary">
-                    {getVariantName(variant)}
-                  </span>
-                </span>
-
-                <span
-                  aria-hidden="true"
-                  className={[
-                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors duration-180 ease-premium",
-                    isSelected
-                      ? "border-primary bg-primary text-white"
-                      : "border-border-strong bg-surface",
-                  ].join(" ")}
-                >
-                  {isSelected ? (
-                    <Check className="h-4 w-4" strokeWidth={2.5} />
-                  ) : null}
-                </span>
-
-                <input
-                  id={checkboxId}
-                  checked={isSelected}
-                  className="sr-only"
-                  type="checkbox"
-                  onChange={() => {
-                    handleVariantToggle(variant.id);
-                  }}
-                />
-              </label>
-            );
-          })}
+          {card.variants.map((variant) => (
+            <VariantOwnershipRow
+              key={variant.id}
+              isOwned={ownedVariantIdSet.has(variant.id)}
+              variant={variant}
+              onToggle={onToggleVariant}
+            />
+          ))}
         </div>
 
-        <div className="mt-6 grid gap-3 xs:grid-cols-2">
-          <button
-            className="flex h-12 items-center justify-center rounded-button border border-border-strong bg-surface px-5 text-body text-text-primary transition-colors duration-180 ease-premium hover:bg-surface-hover"
-            type="button"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-
-          <button
-            className="flex h-12 items-center justify-center rounded-button bg-gradient-brand px-5 text-body text-white transition-all duration-180 ease-premium hover:brightness-[1.03]"
-            type="button"
-            onClick={handleSave}
-          >
-            Save Variants
-          </button>
-        </div>
+        <button
+          className="mt-6 flex h-12 w-full items-center justify-center rounded-button bg-gradient-brand px-5 text-body text-white transition-all duration-180 ease-premium hover:brightness-[1.03]"
+          type="button"
+          onClick={onClose}
+        >
+          Done
+        </button>
       </section>
     </div>
   );

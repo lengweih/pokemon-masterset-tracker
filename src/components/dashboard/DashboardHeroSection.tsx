@@ -56,7 +56,7 @@ export function DashboardHeroSection() {
 
           <Link
             className="inner-ring inline-flex h-12 xs:h-14 xs:w-[210px] w-full items-center justify-center gap-3 rounded-button bg-surface px-7 text-[16px] font-medium text-text-primary transition-all duration-180 ease-premium hover:bg-surface-hover"
-            to={ROUTES.collection}
+            to={`${ROUTES.collection}?ownership=missing`}
           >
             <LayoutGrid
               aria-hidden="true"

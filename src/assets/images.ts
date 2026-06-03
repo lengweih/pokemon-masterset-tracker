@@ -1,45 +1,37 @@
 import heroImage from "./images/screens/hero-image.png";
 import titleIcon from "./images/screens/title-icon.png";
-import productAccessoryPouch from "./images/products/sv8pt5-accessory-pouch.png";
-import productBinder from "./images/products/sv8pt5-binder.png";
-import productBoosterBundle from "./images/products/sv8pt5-booster-bundle.png";
-import productEtb from "./images/products/sv8pt5-etb.png";
-import productEtbPokemonCenter from "./images/products/sv8pt5-etb-pc.png";
-import productPosterCollection from "./images/products/sv8pt5-poster.png";
-import productSurpriseBox from "./images/products/sv8pt5-suprise-box.png";
-import productTechStickerOne from "./images/products/sv8pt5-tech-sticker-one.png";
-import productTechStickerThree from "./images/products/sv8pt5-tech-sticker-three.png";
-import productTechStickerTwo from "./images/products/sv8pt5-tech-sticker-two.png";
 import setLogo from "./images/sv8pt5-logo.png";
 
-const rawCardImages = import.meta.glob<string>("./images/cards/PRE-*.webp", {
-  eager: true,
-  import: "default",
-});
+// Build a `{ fileNameWithoutExtension -> url }` map from an eager glob so new
+// images auto-register without editing this file.
+const toFileNameMap = (modules: Record<string, string>) =>
+  Object.fromEntries(
+    Object.entries(modules).map(([path, imageUrl]) => {
+      const fileName = (path.split("/").pop() ?? "").replace(/\.[^.]+$/, "");
+      return [fileName, imageUrl];
+    }),
+  ) as Record<string, string>;
 
-const cardImagesByFileName = Object.fromEntries(
-  Object.entries(rawCardImages).map(([path, imageUrl]) => {
-    const fileNameWithExtension = path.split("/").pop() ?? "";
-    const fileName = fileNameWithExtension.replace(/\.[^.]+$/, "");
-
-    return [fileName, imageUrl];
+const cardImagesByFileName = toFileNameMap(
+  import.meta.glob<string>("./images/cards/PRE-*.webp", {
+    eager: true,
+    import: "default",
   }),
-) as Record<string, string>;
+);
 const fallbackCardImage =
   cardImagesByFileName["PRE-001"] ?? Object.values(cardImagesByFileName)[0] ?? "";
 
-export const productImages = {
-  accessoryPouch: productAccessoryPouch,
-  binder: productBinder,
-  boosterBundle: productBoosterBundle,
-  etb: productEtb,
-  etbPokemonCenter: productEtbPokemonCenter,
-  posterCollection: productPosterCollection,
-  surpriseBox: productSurpriseBox,
-  techStickerOne: productTechStickerOne,
-  techStickerThree: productTechStickerThree,
-  techStickerTwo: productTechStickerTwo,
-} as const;
+const productImagesByFileName = toFileNameMap(
+  import.meta.glob<string>("./images/products/*.webp", {
+    eager: true,
+    import: "default",
+  }),
+);
+
+// Resolves a product image by its file name (without extension), e.g.
+// `getProductImage("sv8pt5-etb")`.
+export const getProductImage = (fileName: string): string =>
+  productImagesByFileName[fileName] ?? "";
 
 export const cardImages = {
   byFileName: cardImagesByFileName,
@@ -49,7 +41,6 @@ export const cardImages = {
 export const images = {
   cards: cardImages,
   heroImage,
-  products: productImages,
   setLogo,
   titleIcon,
 } as const;

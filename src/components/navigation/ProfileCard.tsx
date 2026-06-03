@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "../../config/app";
-import { useCollectionStats } from "../../hooks/useCollectionStats";
+import { useCollectionStats } from "../../contexts/CollectionStatsContext";
 
 export function ProfileCard() {
   const stats = useCollectionStats();

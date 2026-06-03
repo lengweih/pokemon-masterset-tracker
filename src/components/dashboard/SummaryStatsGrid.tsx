@@ -1,5 +1,5 @@
 import { getDashboardSummaryStats } from "../../data/dashboard";
-import { useCollectionStats } from "../../hooks/useCollectionStats";
+import { useCollectionStats } from "../../contexts/CollectionStatsContext";
 import { SummaryStatCard } from "./SummaryStatCard";
 
 export function SummaryStatsGrid() {

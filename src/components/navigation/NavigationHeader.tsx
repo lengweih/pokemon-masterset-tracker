@@ -5,7 +5,7 @@ export function NavigationHeader() {
   return (
     <section
       aria-label="Navigation header"
-      className="surface-panel flex flex-col justify-between gap-2"
+      className="surface-panel flex flex-col justify-between gap-3"
     >
       <AppBrand />
       <MastersetSelector />

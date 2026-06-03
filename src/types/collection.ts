@@ -61,16 +61,22 @@ export type CollectionSortOption =
   | "completion-low";
 
 export type CollectionVariantTone =
-  | "base"
+  | "default"
   | "reverse"
   | "holo"
   | "pokeball"
-  | "masterball";
+  | "masterball"
+  | "grandmaster";
+
+// Which set a variant belongs to: "master" = obtainable from booster packs,
+// "grandmaster" = obtainable outside packs (promos / special products).
+export type CollectionVariantSet = "master" | "grandmaster";
 
 export interface CollectionCardVariant {
   id: string;
   label: string;
   tone: CollectionVariantTone;
+  set: CollectionVariantSet;
 }
 
 export interface CollectionCard {

@@ -246,7 +246,7 @@
   }
 
   .badge-variant {
-    @apply bg-variant-base-bg text-variant-base-text;
+    @apply bg-variant-default-bg text-variant-default-text;
   }
 
   .badge-reverse {
@@ -259,6 +259,10 @@
 
   .badge-masterball {
     @apply bg-variant-master-ball-bg text-variant-master-ball-text;
+  }
+
+  .badge-grandmaster {
+    @apply bg-primary-light text-brand-violet;
   }
 
   .badge-success {

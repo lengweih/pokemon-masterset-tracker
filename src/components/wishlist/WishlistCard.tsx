@@ -2,21 +2,30 @@ import { Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import type { CollectionCard as CollectionCardModel } from "../../types/collection";
-import { VariantPill } from "../collection/VariantPill";
+import { VariantIcon } from "../collection/VariantIcon";
 
 interface WishlistCardProps {
   card: CollectionCardModel;
+  ownedVariantIds: readonly string[];
   onRemove: (cardId: string) => void;
 }
 
-// Keep the row to a single line of pills. Sets with more variants (e.g. a
-// future grandmaster set) collapse the remainder into a "+N" chip; the full
-// list lives on the card detail page.
+// Keep the row to a single line of variant icons. Cards with more variants than
+// fit collapse the remainder into a "+N" chip; the full list lives on the card
+// detail page.
 const MAX_VISIBLE_VARIANTS = 4;
 
-export function WishlistCard({ card, onRemove }: WishlistCardProps) {
+export function WishlistCard({
+  card,
+  ownedVariantIds,
+  onRemove,
+}: WishlistCardProps) {
   const visibleVariants = card.variants.slice(0, MAX_VISIBLE_VARIANTS);
   const hiddenVariantCount = card.variants.length - visibleVariants.length;
+  const ownedVariantIdSet = new Set(ownedVariantIds);
+  const ownedCount = ownedVariantIdSet.size;
+  const totalCount = card.variants.length;
+  const allOwned = totalCount > 0 && ownedCount === totalCount;
 
   return (
     <article className="group relative z-0 flex items-start gap-3 rounded-card border border-border bg-surface p-3 transition-colors duration-180 ease-premium hover:border-border-strong hover:bg-surface-hover xs:gap-4 xs:p-4">
@@ -47,7 +56,7 @@ export function WishlistCard({ card, onRemove }: WishlistCardProps) {
 
           <button
             aria-label={`Remove ${card.name} from wishlist`}
-            className="relative z-20 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-text-secondary transition-colors duration-180 ease-premium hover:bg-danger-bg hover:text-danger"
+            className="relative z-20 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-text-secondary transition-colors duration-180 ease-premium hover:text-danger"
             type="button"
             onClick={() => {
               onRemove(card.id);
@@ -57,9 +66,24 @@ export function WishlistCard({ card, onRemove }: WishlistCardProps) {
           </button>
         </div>
 
-        <div className="mt-2 flex flex-wrap gap-1.5">
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <span
+            aria-label={`${ownedCount} of ${totalCount} variants owned`}
+            className={[
+              "badge",
+              allOwned
+                ? "badge-success"
+                : "bg-surface-secondary text-text-secondary",
+            ].join(" ")}
+          >
+            {ownedCount}/{totalCount}
+          </span>
           {visibleVariants.map((variant) => (
-            <VariantPill key={variant.id} variant={variant} />
+            <VariantIcon
+              key={variant.id}
+              className={ownedVariantIdSet.has(variant.id) ? "" : "opacity-40"}
+              variant={variant}
+            />
           ))}
           {hiddenVariantCount > 0 ? (
             <span className="badge bg-surface-secondary text-text-secondary">
