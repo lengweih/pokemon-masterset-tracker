@@ -1,14 +1,64 @@
 import { getProductImage } from "../assets/images";
 import type { Product } from "../types/product";
+import {
+  grandmasterPromos,
+  svpCardNameByNumber,
+  type GrandmasterPromo,
+} from "./grandmasterSet";
+import { masterCardNameByNumber } from "./masterSet";
 
 // `imageUrl` is resolved from the product image file by name (see
 // `getProductImage`); the file lives at
 // `src/assets/images/products/<stem>.webp`.
-type ProductInput = Omit<Product, "imageUrl"> & { image: string };
+//
+// `promoSummary` is the only promo field authored here — the promo card list is
+// derived from the shared `grandmasterPromos` source (single source of truth),
+// so promo card identities never drift between the grandmaster set and the
+// product card.
+type ProductInput = Omit<Product, "imageUrl" | "promos"> & {
+  image: string;
+  promoSummary?: string;
+};
 
-const createProduct = ({ image, ...product }: ProductInput): Product => ({
+const resolvePromoCardName = (promo: GrandmasterPromo) =>
+  promo.set === "svp"
+    ? svpCardNameByNumber[promo.number]
+    : masterCardNameByNumber[promo.number];
+
+// Promo card names per product, derived from the shared promo source. Names are
+// de-duped, preserving first-seen order (promos are listed by card number).
+const promoCardsByProductId: Record<string, string[]> = (() => {
+  const byProduct: Record<string, string[]> = {};
+  for (const promo of grandmasterPromos) {
+    const name = resolvePromoCardName(promo);
+    if (!name) {
+      continue;
+    }
+    for (const productId of promo.productIds) {
+      const cards = (byProduct[productId] ??= []);
+      if (!cards.includes(name)) {
+        cards.push(name);
+      }
+    }
+  }
+  return byProduct;
+})();
+
+const createProduct = ({
+  image,
+  promoSummary,
+  ...product
+}: ProductInput): Product => ({
   ...product,
   imageUrl: getProductImage(image),
+  ...(promoSummary
+    ? {
+        promos: {
+          summary: promoSummary,
+          cards: promoCardsByProductId[product.id] ?? [],
+        },
+      }
+    : {}),
 });
 
 export const products: Product[] = (
@@ -20,10 +70,7 @@ export const products: Product[] = (
       name: "Elite Trainer Box",
       releaseDate: "2025-01-17",
       releaseLabel: "Released Jan 17, 2025",
-      promos: {
-        summary: "Includes the Eevee promo (#173).",
-        cards: ["Eevee"],
-      },
+      promoSummary: "Includes the Eevee promo (#173).",
     },
     {
       id: "sv8pt5-etb-pokemon-center",
@@ -33,10 +80,7 @@ export const products: Product[] = (
       name: "Elite Trainer Box - Pokémon Center",
       releaseDate: "2025-01-17",
       releaseLabel: "Released Jan 17, 2025",
-      promos: {
-        summary: "Includes the Pokémon Center Eevee promo (#173).",
-        cards: ["Eevee"],
-      },
+      promoSummary: "Includes the Pokémon Center Eevee promo (#173).",
     },
     {
       id: "sv8pt5-binder",
@@ -54,10 +98,7 @@ export const products: Product[] = (
       name: "Tech Sticker Collection - Glaceon",
       releaseDate: "2025-01-17",
       releaseLabel: "Released Jan 17, 2025",
-      promos: {
-        summary: "Includes the Cosmos Holo Glaceon promo (#171).",
-        cards: ["Glaceon"],
-      },
+      promoSummary: "Includes the Cosmos Holo Glaceon promo (#171).",
     },
     {
       id: "sv8pt5-tech-sticker-leafeon",
@@ -67,10 +108,7 @@ export const products: Product[] = (
       name: "Tech Sticker Collection - Leafeon",
       releaseDate: "2025-01-17",
       releaseLabel: "Released Jan 17, 2025",
-      promos: {
-        summary: "Includes the Cosmos Holo Leafeon promo (#170).",
-        cards: ["Leafeon"],
-      },
+      promoSummary: "Includes the Cosmos Holo Leafeon promo (#170).",
     },
     {
       id: "sv8pt5-tech-sticker-sylveon",
@@ -80,10 +118,7 @@ export const products: Product[] = (
       name: "Tech Sticker Collection - Sylveon",
       releaseDate: "2025-01-17",
       releaseLabel: "Released Jan 17, 2025",
-      promos: {
-        summary: "Includes the Cosmos Holo Sylveon promo (#172).",
-        cards: ["Sylveon"],
-      },
+      promoSummary: "Includes the Cosmos Holo Sylveon promo (#172).",
     },
     {
       id: "sv8pt5-poster",
@@ -92,11 +127,8 @@ export const products: Product[] = (
       name: "Poster Collection",
       releaseDate: "2025-01-17",
       releaseLabel: "Released Jan 17, 2025",
-      promos: {
-        summary:
-          "Includes Cosmos Holo promos: Flareon (#167), Vaporeon (#168), and Jolteon (#169).",
-        cards: ["Flareon", "Vaporeon", "Jolteon"],
-      },
+      promoSummary:
+        "Includes Cosmos Holo promos: Flareon (#167), Vaporeon (#168), and Jolteon (#169).",
     },
     {
       id: "sv8pt5-surprise-box",
@@ -105,20 +137,7 @@ export const products: Product[] = (
       name: "Surprise Box",
       releaseDate: "2025-02-07",
       releaseLabel: "Released Feb 7, 2025",
-      promos: {
-        summary: "Contains 1 of 9 Eeveelution ex promos (Expansion Stamp).",
-        cards: [
-          "Eevee ex",
-          "Vaporeon ex",
-          "Jolteon ex",
-          "Flareon ex",
-          "Espeon ex",
-          "Umbreon ex",
-          "Leafeon ex",
-          "Glaceon ex",
-          "Sylveon ex",
-        ],
-      },
+      promoSummary: "Contains 1 of 9 Eeveelution ex promos (Expansion Stamp).",
     },
     {
       id: "sv8pt5-mini-tin-leafeon",
@@ -191,19 +210,7 @@ export const products: Product[] = (
       name: "Mini Tin - 8-Pack",
       releaseDate: "2025-02-07",
       releaseLabel: "Released Feb 7, 2025",
-      promos: {
-        summary: "Contains all 8 Cosmos Holo Eeveelution promos.",
-        cards: [
-          "Leafeon",
-          "Flareon",
-          "Vaporeon",
-          "Glaceon",
-          "Jolteon",
-          "Espeon",
-          "Sylveon",
-          "Umbreon",
-        ],
-      },
+      promoSummary: "Contains all 8 Cosmos Holo Eeveelution promos.",
     },
     {
       id: "sv8pt5-two-pack-blister",
@@ -212,10 +219,7 @@ export const products: Product[] = (
       name: "Two Pack Blister",
       releaseDate: "2025-02-27",
       releaseLabel: "Released Feb 27, 2025",
-      promos: {
-        summary: "Includes the Pokémon Day Eevee promo (#074).",
-        cards: ["Eevee"],
-      },
+      promoSummary: "Includes the Pokémon Day Eevee promo (#074).",
     },
     {
       id: "sv8pt5-booster-bundle",
@@ -242,10 +246,7 @@ export const products: Product[] = (
       name: "Super-Premium Collection",
       releaseDate: "2025-05-16",
       releaseLabel: "Released May 16, 2025",
-      promos: {
-        summary: "Includes the Eevee ex promo (#174).",
-        cards: ["Eevee ex"],
-      },
+      promoSummary: "Includes the Eevee ex promo (#174).",
     },
     {
       id: "sv8pt5-lucario-tyranitar-premium-collection",
@@ -255,11 +256,8 @@ export const products: Product[] = (
       name: "Lucario ex & Tyranitar ex Premium Collection",
       releaseDate: "2025-08-01",
       releaseLabel: "Released Aug 2025",
-      promos: {
-        summary:
-          "Expansion Stamp promos: Lucario ex (#051, standard + jumbo) and Tyranitar ex (#064).",
-        cards: ["Lucario ex", "Tyranitar ex"],
-      },
+      promoSummary:
+        "Expansion Stamp promos: Lucario ex (#051, standard + jumbo) and Tyranitar ex (#064).",
     },
     {
       id: "sv8pt5-lugia-special-collection",
@@ -269,10 +267,8 @@ export const products: Product[] = (
       name: "Lugia ex Special Collection",
       releaseDate: "2025-08-01",
       releaseLabel: "Released Aug 2025",
-      promos: {
-        summary: "Expansion Stamp promos of Lugia ex (#082, standard + jumbo).",
-        cards: ["Lugia ex"],
-      },
+      promoSummary:
+        "Expansion Stamp promos of Lugia ex (#082, standard + jumbo).",
     },
     {
       id: "sv8pt5-prize-pack-7",
@@ -281,22 +277,7 @@ export const products: Product[] = (
       name: "Play! Pokémon Prize Pack Series 7",
       releaseDate: "2025-08-14",
       releaseLabel: "Released Aug 14, 2025",
-      promos: {
-        summary: "Play! Pokémon promos found across Series 7 prize packs.",
-        cards: [
-          "Budew",
-          "Leafeon ex",
-          "Flareon ex",
-          "Vaporeon ex",
-          "Glaceon ex",
-          "Jolteon ex",
-          "Espeon ex",
-          "Umbreon ex",
-          "Eevee ex",
-          "Regigigas",
-          "Max Rod",
-        ],
-      },
+      promoSummary: "Play! Pokémon promos found across Series 7 prize packs.",
     },
     {
       id: "sv8pt5-holiday-calendar-2025",
@@ -305,10 +286,7 @@ export const products: Product[] = (
       name: "Holiday Calendar 2025",
       releaseDate: "2025-08-22",
       releaseLabel: "Released Aug 22, 2025",
-      promos: {
-        summary: "Includes the Holiday Calendar Glaceon ex promo (#026).",
-        cards: ["Glaceon ex"],
-      },
+      promoSummary: "Includes the Holiday Calendar Glaceon ex promo (#026).",
     },
     {
       id: "sv8pt5-snorlax-blissey-special-collection",
@@ -318,11 +296,8 @@ export const products: Product[] = (
       name: "Snorlax ex & Blissey ex Special Collection",
       releaseDate: "2025-09-12",
       releaseLabel: "Released Sep 2025",
-      promos: {
-        summary:
-          "Expansion Stamp promos of Snorlax ex (#076, standard + jumbo).",
-        cards: ["Snorlax ex"],
-      },
+      promoSummary:
+        "Expansion Stamp promos of Snorlax ex (#076, standard + jumbo).",
     },
     {
       id: "sv8pt5-premium-figure-collection",
@@ -332,10 +307,7 @@ export const products: Product[] = (
       name: "Premium Figure Collection",
       releaseDate: "2025-09-26",
       releaseLabel: "Released Sep 26, 2025",
-      promos: {
-        summary: "Holo promos: Espeon ex (#175) and Umbreon ex (#176).",
-        cards: ["Espeon ex", "Umbreon ex"],
-      },
+      promoSummary: "Holo promos: Espeon ex (#175) and Umbreon ex (#176).",
     },
     {
       id: "sv8pt5-hydreigon-dragapult-premium-collection",
@@ -345,10 +317,7 @@ export const products: Product[] = (
       name: "Hydreigon ex & Dragapult ex Premium Collection",
       releaseDate: "2025-10-03",
       releaseLabel: "Released Oct 3, 2025",
-      promos: {
-        summary: "Includes the jumbo Dragapult ex promo (#073).",
-        cards: ["Dragapult ex"],
-      },
+      promoSummary: "Includes the jumbo Dragapult ex promo (#073).",
     },
     {
       id: "sv8pt5-lugia-latias-premium-collection",
@@ -358,11 +327,8 @@ export const products: Product[] = (
       name: "Lugia ex & Latias ex Premium Collection",
       releaseDate: "2025-10-17",
       releaseLabel: "Released Oct 17, 2025",
-      promos: {
-        summary:
-          "Expansion Stamp (Alternate Placement) promos of Lugia ex (#082, standard + jumbo).",
-        cards: ["Lugia ex"],
-      },
+      promoSummary:
+        "Expansion Stamp (Alternate Placement) promos of Lugia ex (#082, standard + jumbo).",
     },
     {
       id: "sv8pt5-prize-pack-8",
@@ -371,10 +337,25 @@ export const products: Product[] = (
       name: "Play! Pokémon Prize Pack Series 8",
       releaseDate: "2026-01-01",
       releaseLabel: "Released Jan 1, 2026",
-      promos: {
-        summary: "Play! Pokémon promos found in Series 8 prize packs.",
-        cards: ["Budew", "Sparkling Crystal", "Max Rod"],
-      },
+      promoSummary: "Play! Pokémon promos found in Series 8 prize packs.",
     },
   ] satisfies readonly ProductInput[]
 ).map(createProduct);
+
+// Guard against drift: every product referenced by a promo must exist, and
+// every product with a summary must resolve to at least one promo card.
+if (import.meta.env.DEV) {
+  const productIds = new Set(products.map((product) => product.id));
+  for (const productId of Object.keys(promoCardsByProductId)) {
+    if (!productIds.has(productId)) {
+      console.warn(
+        `grandmasterPromos references unknown product id: ${productId}`,
+      );
+    }
+  }
+  for (const product of products) {
+    if (product.promos && product.promos.cards.length === 0) {
+      console.warn(`Product "${product.id}" has a promo summary but no cards.`);
+    }
+  }
+}

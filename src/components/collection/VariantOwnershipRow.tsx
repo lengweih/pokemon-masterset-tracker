@@ -36,7 +36,7 @@ export function VariantOwnershipRow({
         <span className="flex w-10 shrink-0 justify-center">
           <VariantIcon variant={variant} />
         </span>
-        <span className="min-w-0 truncate text-xs font-semibold text-text-primary xs:text-sm">
+        <span className="min-w-0 text-xs font-semibold text-text-primary xs:text-sm">
           {getVariantName(variant)}
         </span>
       </span>
@@ -44,7 +44,9 @@ export function VariantOwnershipRow({
       <span
         className={[
           "badge shrink-0 gap-1",
-          isOwned ? "badge-success" : "bg-surface-secondary text-text-secondary",
+          isOwned
+            ? "badge-success"
+            : "bg-surface-secondary text-text-secondary",
         ].join(" ")}
       >
         {isOwned ? (

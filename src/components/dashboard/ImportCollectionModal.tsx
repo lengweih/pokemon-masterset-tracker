@@ -54,12 +54,19 @@ export function ImportCollectionModal({ onClose }: ImportCollectionModalProps) {
     reader.onload = () => {
       setJsonText(typeof reader.result === "string" ? reader.result : "");
     };
+    reader.onerror = () => {
+      setFileName(null);
+      setError("Couldn't read that file. Try again or paste the JSON below.");
+    };
     reader.readAsText(file);
   };
 
-  const applyAndReload = (backup: CollectionBackup) => {
+  const applyAndClose = (backup: CollectionBackup) => {
+    // applyCollectionBackup dispatches the localStorage sync event, so live
+    // consumers (collection page, dashboard stats, nav progress) update in
+    // place — no reload needed; just close the modal.
     applyCollectionBackup(backup);
-    window.location.reload();
+    onClose();
   };
 
   const handleImport = () => {
@@ -76,7 +83,7 @@ export function ImportCollectionModal({ onClose }: ImportCollectionModalProps) {
       return;
     }
 
-    applyAndReload(backup);
+    applyAndClose(backup);
   };
 
   const handleBackdropMouseDown = (event: ReactMouseEvent<HTMLDivElement>) => {
@@ -123,7 +130,7 @@ export function ImportCollectionModal({ onClose }: ImportCollectionModalProps) {
               className="flex h-12 items-center justify-center rounded-button bg-danger px-5 text-body font-semibold text-white transition-all duration-180 ease-premium hover:brightness-[1.03]"
               type="button"
               onClick={() => {
-                applyAndReload(pendingBackup);
+                applyAndClose(pendingBackup);
               }}
             >
               Replace data

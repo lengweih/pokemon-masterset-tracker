@@ -9,7 +9,8 @@ export type CollectionCardRarity =
   | "ace-spec-rare"
   | "illustration-rare"
   | "special-illustration-rare"
-  | "hyper-rare";
+  | "hyper-rare"
+  | "promo";
 
 export type CollectionCardType =
   | "grass"

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 
@@ -20,11 +20,11 @@ import {
   useResponsiveGridPageSize,
 } from "../../hooks/useResponsiveGridPageSize";
 import {
-  getCardCompletion,
   getOwnedVariantCount,
   getOwnedVariantIds,
   setVariantSetOwnership,
   toggleVariantOwnership,
+  toggleWishlistCard,
 } from "../../lib/collectionOwnership";
 import type {
   CollectionCard as CollectionCardModel,
@@ -177,9 +177,8 @@ const collectionSortOptions = [
 const matchesOwnershipFilter = (
   card: CollectionCardModel,
   ownershipFilter: CollectionOwnershipFilter,
-  ownedVariantsByCardId: OwnedVariantsByCardId,
+  ownedVariantCount: number,
 ) => {
-  const ownedVariantCount = getOwnedVariantCount(card, ownedVariantsByCardId);
   const isComplete = ownedVariantCount === card.variants.length;
   const isMissing = ownedVariantCount === 0;
 
@@ -198,10 +197,17 @@ const matchesOwnershipFilter = (
   return true;
 };
 
+// Completion as a 0..1 ratio from a precomputed owned-variant count, so sorting
+// never recomputes ownership (which would allocate a Set per comparison).
+const getCompletionRatio = (
+  card: CollectionCardModel,
+  ownedVariantCount: number,
+) => (card.variants.length === 0 ? 0 : ownedVariantCount / card.variants.length);
+
 const sortCollectionCards = (
   cardsToSort: readonly CollectionCardModel[],
   sortOption: CollectionSortOption,
-  ownedVariantsByCardId: OwnedVariantsByCardId,
+  ownedCountByCardId: ReadonlyMap<string, number>,
 ) => {
   return [...cardsToSort].sort((firstCard, secondCard) => {
     if (sortOption === "number-desc") {
@@ -220,15 +226,15 @@ const sortCollectionCards = (
 
     if (sortOption === "completion-high") {
       return (
-        getCardCompletion(secondCard, ownedVariantsByCardId) -
-        getCardCompletion(firstCard, ownedVariantsByCardId)
+        getCompletionRatio(secondCard, ownedCountByCardId.get(secondCard.id) ?? 0) -
+        getCompletionRatio(firstCard, ownedCountByCardId.get(firstCard.id) ?? 0)
       );
     }
 
     if (sortOption === "completion-low") {
       return (
-        getCardCompletion(firstCard, ownedVariantsByCardId) -
-        getCardCompletion(secondCard, ownedVariantsByCardId)
+        getCompletionRatio(firstCard, ownedCountByCardId.get(firstCard.id) ?? 0) -
+        getCompletionRatio(secondCard, ownedCountByCardId.get(secondCard.id) ?? 0)
       );
     }
 
@@ -246,7 +252,7 @@ export function CollectionBrowser({
   onOwnedVariantsChange,
   onWishlistCardIdsChange,
 }: CollectionBrowserProps) {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [rarityFilter, setRarityFilter] =
     useState<CollectionRarityFilter>("all");
@@ -269,6 +275,31 @@ export function CollectionBrowser({
     () => new Set(wishlistCardIds),
     [wishlistCardIds],
   );
+
+  // The `ownership` deep-link param is consumed once into state above. Strip it
+  // from the URL (via replace, so there's no extra history entry and no visible
+  // change for the user) so the dropdown stays authoritative and a later reload
+  // doesn't re-apply the stale param.
+  useEffect(() => {
+    if (!searchParams.has("ownership")) {
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("ownership");
+    setSearchParams(nextParams, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  // Owned-variant count per card, computed once per render. Filtering, sorting,
+  // and the card grid all read from this map instead of recomputing ownership
+  // (which allocates a Set) for every card and every sort comparison.
+  const ownedCountByCardId = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const card of activeCards) {
+      counts.set(card.id, getOwnedVariantCount(card, ownedVariantsByCardId));
+    }
+    return counts;
+  }, [activeCards, ownedVariantsByCardId]);
 
   const rarityFilterOptions = useMemo(() => {
     const presentRarities = new Set(activeCards.map((card) => card.rarity));
@@ -307,18 +338,18 @@ export function CollectionBrowser({
         matchesSearch &&
         matchesRarity &&
         matchesType &&
-        matchesOwnershipFilter(card, ownershipFilter, ownedVariantsByCardId)
+        matchesOwnershipFilter(
+          card,
+          ownershipFilter,
+          ownedCountByCardId.get(card.id) ?? 0,
+        )
       );
     });
 
-    return sortCollectionCards(
-      filteredCards,
-      sortOption,
-      ownedVariantsByCardId,
-    );
+    return sortCollectionCards(filteredCards, sortOption, ownedCountByCardId);
   }, [
     activeCards,
-    ownedVariantsByCardId,
+    ownedCountByCardId,
     ownershipFilter,
     rarityFilter,
     searchQuery,
@@ -330,6 +361,20 @@ export function CollectionBrowser({
     items: visibleCards,
     pageSize,
   });
+
+  // Reset to the first page whenever a filter/sort/tab changes, so a narrowed
+  // result set never leaves the user stranded on a now-out-of-range page. This
+  // replaces a repeated `goToPage(1)` in every filter/sort handler. `goToPage`
+  // is read from a ref so the reset fires only on filter changes, not whenever
+  // pagination's identity shifts (e.g. a responsive page-size change).
+  const goToPageRef = useRef(pagination.goToPage);
+  useEffect(() => {
+    goToPageRef.current = pagination.goToPage;
+  });
+  useEffect(() => {
+    goToPageRef.current(1);
+  }, [activeView, ownershipFilter, rarityFilter, searchQuery, sortOption, typeFilter]);
+
   const gridPlaceholderCount =
     pagination.totalPages > 1
       ? Math.max(pagination.pageSize - pagination.currentItems.length, 0)
@@ -341,56 +386,49 @@ export function CollectionBrowser({
     typeFilter !== "all" ||
     ownershipFilter !== "all";
 
-  const handleActiveViewChange = (nextView: CollectionViewId) => {
-    onActiveViewChange(nextView);
-    setRarityFilter("all");
-    setTypeFilter("all");
-    pagination.goToPage(1);
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
-    pagination.goToPage(1);
-  };
-
-  const handleRarityFilterChange = (value: CollectionRarityFilter) => {
-    setRarityFilter(value);
-    pagination.goToPage(1);
-  };
-
-  const handleTypeFilterChange = (value: CollectionTypeFilter) => {
-    setTypeFilter(value);
-    pagination.goToPage(1);
-  };
-
-  const handleOwnershipFilterChange = (value: CollectionOwnershipFilter) => {
-    setOwnershipFilter(value);
-    pagination.goToPage(1);
-  };
-
-  const handleSortChange = (value: CollectionSortOption) => {
-    setSortOption(value);
-    pagination.goToPage(1);
-  };
-
-  const handleClearFilters = () => {
+  // Single source of truth for clearing the browser back to its default view.
+  // Used both when switching tabs and by the "Clear filters" action so the two
+  // paths can't drift on which filters they reset.
+  const resetFilters = () => {
     setSearchQuery("");
     setRarityFilter("all");
     setTypeFilter("all");
     setOwnershipFilter("all");
-    pagination.goToPage(1);
+  };
+
+  const handleActiveViewChange = (nextView: CollectionViewId) => {
+    onActiveViewChange(nextView);
+    resetFilters();
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+  };
+
+  const handleRarityFilterChange = (value: CollectionRarityFilter) => {
+    setRarityFilter(value);
+  };
+
+  const handleTypeFilterChange = (value: CollectionTypeFilter) => {
+    setTypeFilter(value);
+  };
+
+  const handleOwnershipFilterChange = (value: CollectionOwnershipFilter) => {
+    setOwnershipFilter(value);
+  };
+
+  const handleSortChange = (value: CollectionSortOption) => {
+    setSortOption(value);
+  };
+
+  const handleClearFilters = () => {
+    resetFilters();
   };
 
   const handleWishlistToggle = (cardId: string) => {
-    onWishlistCardIdsChange((currentCardIds) => {
-      if (currentCardIds.includes(cardId)) {
-        return currentCardIds.filter(
-          (currentCardId) => currentCardId !== cardId,
-        );
-      }
-
-      return [...currentCardIds, cardId];
-    });
+    onWishlistCardIdsChange((currentCardIds) =>
+      toggleWishlistCard(currentCardIds, cardId),
+    );
   };
 
   const handleToggleVariant = (variantId: string) => {
@@ -514,11 +552,9 @@ export function CollectionBrowser({
                     >
                       <CollectionCard
                         card={card}
+                        collectionView={activeView}
                         isWishlisted={wishlistCardIdSet.has(card.id)}
-                        ownedVariantCount={getOwnedVariantCount(
-                          card,
-                          ownedVariantsByCardId,
-                        )}
+                        ownedVariantCount={ownedCountByCardId.get(card.id) ?? 0}
                         onEditVariants={setEditingCard}
                         onWishlistToggle={handleWishlistToggle}
                       />

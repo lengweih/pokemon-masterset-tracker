@@ -1,19 +1,22 @@
+import { useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 
 import { VariantOwnershipRow } from "../components/collection/VariantOwnershipRow";
 import { WishlistButton } from "../components/collection/WishlistButton";
 import {
+  collectionCardsByView,
   getCollectionCardById,
-  getCollectionCardNeighbors,
 } from "../data/collectionCards";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
 import {
+  getCompletionPercentage,
   getOwnedVariantIds,
   isOwnedVariantsByCardId,
   isStringArray,
   setVariantSetOwnership,
   toggleVariantOwnership,
+  toggleWishlistCard,
 } from "../lib/collectionOwnership";
 import { STORAGE_KEYS } from "../lib/storageKeys";
 import { ROUTES } from "../routes/paths";
@@ -22,12 +25,25 @@ import type {
   OwnedVariantsByCardId,
 } from "../types/collection";
 
+// SVP black-star promo cards share numbers with the master set's secret rares,
+// so they're labeled as their own set to avoid confusion.
+const isSvpCard = (card: CollectionCard) => card.id.startsWith("svp-");
+const getCardSetName = (card: CollectionCard) =>
+  isSvpCard(card) ? "Scarlet Violet Promo" : "Prismatic Evolutions";
+
+// Preserves the `from` context so continued prev/next navigation stays within
+// the same list the user was browsing.
+const cardDetailHref = (cardId: string, from: string | null) =>
+  `/collection/${cardId}${from ? `?from=${from}` : ""}`;
+
 function NeighborLink({
   card,
   direction,
+  from,
 }: {
   card: CollectionCard | undefined;
   direction: "previous" | "next";
+  from: string | null;
 }) {
   const isPrevious = direction === "previous";
   const Icon = isPrevious ? ChevronLeft : ChevronRight;
@@ -50,7 +66,7 @@ function NeighborLink({
     <Link
       aria-label={`${isPrevious ? "Previous" : "Next"} card, #${card.number} ${card.name}`}
       className={`${baseClass} text-text-secondary hover:bg-surface-hover hover:text-text-primary`}
-      to={`/collection/${card.id}`}
+      to={cardDetailHref(card.id, from)}
     >
       <Icon className="h-5 w-5" strokeWidth={2} />
     </Link>
@@ -59,6 +75,8 @@ function NeighborLink({
 
 export function CardDetailPage() {
   const { cardId } = useParams<{ cardId: string }>();
+  const [searchParams] = useSearchParams();
+  const fromContext = searchParams.get("from");
   const card = cardId ? getCollectionCardById(cardId) : undefined;
 
   const [ownedVariantsByCardId, setOwnedVariantsByCardId] =
@@ -72,6 +90,26 @@ export function CardDetailPage() {
     [],
     isStringArray,
   );
+
+  // The ordered list prev/next walks, matching where the user came from so
+  // navigation mirrors that grid (and never crosses master <-> SVP).
+  const neighborCards = useMemo<readonly CollectionCard[]>(() => {
+    if (fromContext === "wishlist") {
+      return wishlistCardIds
+        .map((id) => getCollectionCardById(id))
+        .filter((neighbor): neighbor is CollectionCard => Boolean(neighbor));
+    }
+    if (fromContext === "grandmaster") {
+      return collectionCardsByView.grandmaster;
+    }
+    if (fromContext === "master") {
+      return collectionCardsByView.master;
+    }
+    // No/unknown context: fall back to the card's own set list.
+    return cardId?.startsWith("svp-")
+      ? collectionCardsByView.grandmaster
+      : collectionCardsByView.master;
+  }, [fromContext, wishlistCardIds, cardId]);
 
   if (!card) {
     return (
@@ -90,13 +128,37 @@ export function CardDetailPage() {
     );
   }
 
-  const { previousCard, nextCard } = getCollectionCardNeighbors(card.id);
+  const currentIndex = neighborCards.findIndex(
+    (neighbor) => neighbor.id === card.id,
+  );
+  const previousCard =
+    currentIndex > 0 ? neighborCards[currentIndex - 1] : undefined;
+  const nextCard =
+    currentIndex >= 0 && currentIndex < neighborCards.length - 1
+      ? neighborCards[currentIndex + 1]
+      : undefined;
+  const backTo =
+    fromContext === "wishlist" ? ROUTES.wishlist : ROUTES.collection;
+  const backLabel =
+    fromContext === "wishlist" ? "Back to Wishlist" : "Back to Collection";
+
+  // Tells the user which list the prev/next buttons cycle through (and where in
+  // it they are), so it's clear the detail view is scoped to that tab.
+  const browsingContextLabel =
+    fromContext === "grandmaster"
+      ? "Grandmaster set"
+      : fromContext === "master"
+        ? "Master set"
+        : fromContext === "wishlist"
+          ? "Wishlist"
+          : null;
+  const browsingPosition = currentIndex >= 0 ? currentIndex + 1 : null;
+
   const ownedVariantIds = getOwnedVariantIds(card, ownedVariantsByCardId);
   const ownedVariantIdSet = new Set(ownedVariantIds);
   const ownedCount = ownedVariantIds.length;
   const totalCount = card.variants.length;
-  const completionPercentage =
-    totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
+  const completionPercentage = getCompletionPercentage(ownedCount, totalCount);
   const isWishlisted = wishlistCardIds.includes(card.id);
 
   // Variants split into their sets so each can be edited independently. A
@@ -129,11 +191,7 @@ export function CardDetailPage() {
   };
 
   const toggleWishlist = () => {
-    setWishlistCardIds((current) =>
-      current.includes(card.id)
-        ? current.filter((id) => id !== card.id)
-        : [...current, card.id],
-    );
+    setWishlistCardIds((current) => toggleWishlistCard(current, card.id));
   };
 
   return (
@@ -142,21 +200,41 @@ export function CardDetailPage() {
       className="grid w-full self-start gap-3"
     >
       <div className="surface-card p-6 sm:p-8">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col items-start gap-3 2xs:flex-row 2xs:items-start 2xs:justify-between">
           <Link
             className="-ml-2 inline-flex h-9 items-center gap-1.5 rounded-button px-2 text-label text-text-secondary transition-colors duration-180 ease-premium hover:bg-surface-hover hover:text-text-primary"
-            to={ROUTES.collection}
+            to={backTo}
           >
             <ChevronLeft className="h-4 w-4" strokeWidth={2} />
-            Back to Collection
+            {backLabel}
           </Link>
 
-          <div className="flex items-center gap-2">
-            <NeighborLink card={previousCard} direction="previous" />
-            <span className="px-1 text-sm font-semibold tabular-nums text-text-secondary">
-              #{card.number}
-            </span>
-            <NeighborLink card={nextCard} direction="next" />
+          <div className="flex w-full flex-col items-center gap-2 2xs:w-auto 2xs:items-end 2xs:gap-1.5">
+            {browsingContextLabel && browsingPosition ? (
+              <span className="flex items-center gap-1.5 whitespace-nowrap px-1 text-[11px] font-semibold uppercase tracking-wide">
+                <span className="text-brand-violet">
+                  {browsingContextLabel}
+                </span>
+                <span className="tabular-nums text-text-secondary">
+                  {browsingPosition} / {neighborCards.length}
+                </span>
+              </span>
+            ) : null}
+            <div className="flex items-center gap-2">
+              <NeighborLink
+                card={previousCard}
+                direction="previous"
+                from={fromContext}
+              />
+              <span className="px-1 text-sm font-semibold tabular-nums text-text-secondary">
+                #{card.number}
+              </span>
+              <NeighborLink
+                card={nextCard}
+                direction="next"
+                from={fromContext}
+              />
+            </div>
           </div>
         </div>
 
@@ -172,7 +250,7 @@ export function CardDetailPage() {
 
           <div className="min-w-0">
             <p className="text-label uppercase tracking-[0.18em] text-brand-blue">
-              Prismatic Evolutions
+              {getCardSetName(card)}
             </p>
             <h1
               id="card-detail-title"
@@ -224,15 +302,15 @@ export function CardDetailPage() {
 
               return (
                 <div key={section.set} className="mt-8">
-                  <div className="flex items-center justify-between gap-3">
-                    <h2 className="text-card text-text-primary">
+                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                    <h2 className="whitespace-nowrap text-[13px] 2xs:text-card text-text-primary">
                       {section.title}
-                      <span className="ml-2 text-sm font-semibold tabular-nums text-text-secondary">
+                      <span className="ml-2 whitespace-nowrap text-[13px] 2xs:text-sm font-semibold tabular-nums text-text-secondary">
                         {sectionOwnedCount} / {section.variants.length}
                       </span>
                     </h2>
                     <button
-                      className="rounded-button text-sm font-semibold text-primary transition-colors duration-180 ease-premium hover:text-primary-hover"
+                      className="ml-auto shrink-0 rounded-button text-[13px] 2xs:text-sm font-semibold text-primary transition-colors duration-180 ease-premium hover:text-primary-hover"
                       type="button"
                       onClick={() =>
                         toggleSectionAllOwned(

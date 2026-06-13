@@ -27,6 +27,17 @@ export const isOwnedVariantsByCardId = (
   return isRecord(value) && Object.values(value).every(isStringArray);
 };
 
+// Returns the next wishlist card-id list with `cardId` toggled (added if absent,
+// removed if present). Shared by the collection browser and the card detail page
+// so the toggle semantics stay in one place.
+export const toggleWishlistCard = (
+  wishlistCardIds: readonly string[],
+  cardId: string,
+): string[] =>
+  wishlistCardIds.includes(cardId)
+    ? wishlistCardIds.filter((id) => id !== cardId)
+    : [...wishlistCardIds, cardId];
+
 export const isCollectionPreferences = (
   value: unknown,
 ): value is CollectionPreferences => {
@@ -105,18 +116,12 @@ const setCardOwnership = (
   return next;
 };
 
-export const getCardCompletion = (
-  card: CollectionCard,
-  ownedVariantsByCardId: OwnedVariantsByCardId,
-) => {
-  if (card.variants.length === 0) {
-    return 0;
-  }
-
-  return (
-    getOwnedVariantCount(card, ownedVariantsByCardId) / card.variants.length
-  );
-};
+// Owned-variant completion as a rounded 0..100 percentage. Centralizes the
+// rounding rule shared by the card detail page and the variant selector modal.
+export const getCompletionPercentage = (
+  ownedCount: number,
+  totalCount: number,
+): number => (totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0);
 
 export const getCollectionProgress = (
   cards: readonly CollectionCard[],

@@ -1,4 +1,5 @@
 import { mastersetOptions } from "../data/mastersets";
+import { notifyLocalStorageChange } from "../hooks/useLocalStorageState";
 import type { OwnedVariantsByCardId } from "../types/collection";
 import { isOwnedVariantsByCardId, isStringArray } from "./collectionOwnership";
 import { buildSetStorageKeys } from "./storageKeys";
@@ -143,5 +144,9 @@ export const applyCollectionBackup = (backup: CollectionBackup): void => {
       JSON.stringify(set.collection),
     );
     window.localStorage.setItem(keys.wishlist, JSON.stringify(set.wishlist));
+    // Notify live useLocalStorageState consumers so the UI reflects the import
+    // even without a reload.
+    notifyLocalStorageChange(keys.collection);
+    notifyLocalStorageChange(keys.wishlist);
   }
 };

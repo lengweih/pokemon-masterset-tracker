@@ -7,6 +7,19 @@ type LocalStorageValidator<TValue> = (value: unknown) => value is TValue;
 // sync within the same tab. The native "storage" event only fires across tabs.
 const LOCAL_STORAGE_SYNC_EVENT = "local-storage-state-sync";
 
+// Notifies same-tab useLocalStorageState consumers that `key` changed. Call this
+// after writing localStorage outside of useLocalStorageState (e.g. an import),
+// so live state stays in sync without a reload.
+export const notifyLocalStorageChange = (key: string): void => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(LOCAL_STORAGE_SYNC_EVENT, { detail: key }),
+  );
+};
+
 const readLocalStorageValue = <TValue,>(
   key: string,
   initialValue: TValue,
@@ -69,9 +82,7 @@ export function useLocalStorageState<TValue>(
       if (typeof window !== "undefined") {
         try {
           window.localStorage.setItem(key, JSON.stringify(resolvedValue));
-          window.dispatchEvent(
-            new CustomEvent(LOCAL_STORAGE_SYNC_EVENT, { detail: key }),
-          );
+          notifyLocalStorageChange(key);
         } catch {
           // Keep the in-memory state usable even if storage is unavailable.
         }

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
+import { getCompletionPercentage } from "../../lib/collectionOwnership";
 import type { CollectionCard as CollectionCardModel } from "../../types/collection";
 import { VariantOwnershipRow } from "./VariantOwnershipRow";
 
@@ -52,8 +53,7 @@ export function VariantSelectorModal({
   const ownedVariantIdSet = new Set(ownedVariantIds);
   const ownedCount = ownedVariantIdSet.size;
   const totalCount = card.variants.length;
-  const completionPercentage =
-    totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
+  const completionPercentage = getCompletionPercentage(ownedCount, totalCount);
   const allOwned = totalCount > 0 && ownedCount === totalCount;
 
   return (

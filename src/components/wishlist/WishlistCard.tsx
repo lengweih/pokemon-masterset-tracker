@@ -1,8 +1,14 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import type { CollectionCard as CollectionCardModel } from "../../types/collection";
+import type {
+  CollectionCard as CollectionCardModel,
+  CollectionCardVariant,
+} from "../../types/collection";
 import { VariantIcon } from "../collection/VariantIcon";
+import { getVariantName } from "../collection/variantDisplay";
+import { Tooltip } from "../ui/Tooltip";
 
 interface WishlistCardProps {
   card: CollectionCardModel;
@@ -10,18 +16,84 @@ interface WishlistCardProps {
   onRemove: (cardId: string) => void;
 }
 
-// Keep the row to a single line of variant icons. Cards with more variants than
-// fit collapse the remainder into a "+N" chip; the full list lives on the card
-// detail page.
-const MAX_VISIBLE_VARIANTS = 4;
+const VARIANT_ROW_GAP = 6; // matches gap-1.5
+const FALLBACK_ICON_WIDTH = 32; // VariantIcon is w-8
+const OVERFLOW_BADGE_WIDTH = 42; // width reserved for the "+N" chip (incl. gap)
+
+// Renders the variant icons on a single line, showing as many as fit and
+// collapsing the remainder into a "+N" chip only when they would overflow.
+function WishlistVariantRow({
+  variants,
+  ownedVariantIdSet,
+}: {
+  variants: readonly CollectionCardVariant[];
+  ownedVariantIdSet: Set<string>;
+}) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [visibleCount, setVisibleCount] = useState(variants.length);
+
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    if (!row) {
+      return undefined;
+    }
+
+    const measure = () => {
+      const total = variants.length;
+      const available = row.clientWidth;
+      const iconWidth =
+        row.querySelector<HTMLElement>("[data-variant-icon]")?.offsetWidth ??
+        FALLBACK_ICON_WIDTH;
+      const unit = iconWidth + VARIANT_ROW_GAP;
+
+      // How many fit when no "+N" chip is needed.
+      if (Math.floor((available + VARIANT_ROW_GAP) / unit) >= total) {
+        setVisibleCount(total);
+        return;
+      }
+
+      // Otherwise reserve room for the "+N" chip.
+      const fit = Math.floor((available - OVERFLOW_BADGE_WIDTH) / unit);
+      setVisibleCount(Math.max(0, Math.min(fit, total)));
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [variants]);
+
+  const hiddenCount = variants.length - visibleCount;
+
+  return (
+    <div
+      ref={rowRef}
+      className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden"
+    >
+      {variants.slice(0, visibleCount).map((variant) => (
+        <span key={variant.id} className="shrink-0" data-variant-icon>
+          <Tooltip label={getVariantName(variant)}>
+            <VariantIcon
+              className={ownedVariantIdSet.has(variant.id) ? "" : "opacity-40"}
+              variant={variant}
+            />
+          </Tooltip>
+        </span>
+      ))}
+      {hiddenCount > 0 ? (
+        <span className="badge shrink-0 bg-surface-secondary text-text-secondary">
+          +{hiddenCount}
+        </span>
+      ) : null}
+    </div>
+  );
+}
 
 export function WishlistCard({
   card,
   ownedVariantIds,
   onRemove,
 }: WishlistCardProps) {
-  const visibleVariants = card.variants.slice(0, MAX_VISIBLE_VARIANTS);
-  const hiddenVariantCount = card.variants.length - visibleVariants.length;
   const ownedVariantIdSet = new Set(ownedVariantIds);
   const ownedCount = ownedVariantIdSet.size;
   const totalCount = card.variants.length;
@@ -66,11 +138,11 @@ export function WishlistCard({
           </button>
         </div>
 
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        <div className="mt-2 flex items-center gap-1.5">
           <span
             aria-label={`${ownedCount} of ${totalCount} variants owned`}
             className={[
-              "badge",
+              "badge shrink-0",
               allOwned
                 ? "badge-success"
                 : "bg-surface-secondary text-text-secondary",
@@ -78,25 +150,17 @@ export function WishlistCard({
           >
             {ownedCount}/{totalCount}
           </span>
-          {visibleVariants.map((variant) => (
-            <VariantIcon
-              key={variant.id}
-              className={ownedVariantIdSet.has(variant.id) ? "" : "opacity-40"}
-              variant={variant}
-            />
-          ))}
-          {hiddenVariantCount > 0 ? (
-            <span className="badge bg-surface-secondary text-text-secondary">
-              +{hiddenVariantCount}
-            </span>
-          ) : null}
+          <WishlistVariantRow
+            ownedVariantIdSet={ownedVariantIdSet}
+            variants={card.variants}
+          />
         </div>
       </div>
 
       <Link
         aria-label={`View details for ${card.name}`}
         className="absolute inset-0 z-10 rounded-card"
-        to={`/collection/${card.id}`}
+        to={`/collection/${card.id}?from=wishlist`}
       >
         <span className="sr-only">View details for {card.name}</span>
       </Link>

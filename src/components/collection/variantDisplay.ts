@@ -24,6 +24,8 @@ const variantNameById: Record<string, string> = {
   "pokemon-day": "Pokémon Day",
   jumbo: "Jumbo",
   "professor-program": "Professor Program",
+  "holo-promo": "Holo",
+  "pokemon-center": "Pokémon Center",
 };
 
 export const getVariantName = (variant: CollectionCardVariant) =>

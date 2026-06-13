@@ -1,13 +1,19 @@
 import { Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import type { CollectionCard as CollectionCardModel } from "../../types/collection";
+import type {
+  CollectionCard as CollectionCardModel,
+  CollectionViewId,
+} from "../../types/collection";
 import { WishlistButton } from "./WishlistButton";
 
 interface CollectionCardProps {
   card: CollectionCardModel;
   isWishlisted: boolean;
   ownedVariantCount: number;
+  // The view this card is shown in, so the detail page can navigate prev/next
+  // within the same list (passed through as `?from=`).
+  collectionView: CollectionViewId;
   onEditVariants: (card: CollectionCardModel) => void;
   onWishlistToggle: (cardId: string) => void;
 }
@@ -46,12 +52,18 @@ function CollectionEditButton({
   );
 }
 
-function CardDetailLink({ card }: { card: CollectionCardModel }) {
+function CardDetailLink({
+  card,
+  collectionView,
+}: {
+  card: CollectionCardModel;
+  collectionView: CollectionViewId;
+}) {
   return (
     <Link
       aria-label={`View details for ${card.name}`}
       className={[pokemonCardLayerClass, "z-10"].join(" ")}
-      to={`/collection/${card.id}`}
+      to={`/collection/${card.id}?from=${collectionView}`}
     >
       <span className="sr-only">View details for {card.name}</span>
     </Link>
@@ -62,6 +74,7 @@ export function CollectionCard({
   card,
   isWishlisted,
   ownedVariantCount,
+  collectionView,
   onEditVariants,
   onWishlistToggle,
 }: CollectionCardProps) {
@@ -82,7 +95,7 @@ export function CollectionCard({
         src={card.imageUrl}
       />
 
-      <CardDetailLink card={card} />
+      <CardDetailLink card={card} collectionView={collectionView} />
 
       <div
         className={[
