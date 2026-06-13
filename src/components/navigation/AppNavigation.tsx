@@ -9,7 +9,6 @@ import { MastersetSelector } from "./MastersetSelector";
 import { NavigationHeader } from "./NavigationHeader";
 import { NavigationPanel } from "./NavigationPanel";
 import { NavigationLinks } from "./NavigationLinks";
-import { ProfileCard } from "./ProfileCard";
 
 export function AppNavigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -93,18 +92,18 @@ export function AppNavigation() {
           {isMobileMenuOpen && (
             <motion.div
               id="mobile-navigation-menu"
-              className="surface-panel pt-4 absolute left-0 right-0 top-full z-40 mt-3 grid origin-top gap-3"
+              className="surface-panel rounded-[23px] pt-4 absolute left-0 right-0 top-full z-40 mt-3 grid origin-top gap-3"
               initial={{
-                clipPath: "inset(0 0 100% 0 round 24px)",
+                clipPath: "inset(0 0 100% 0 round 23px)",
               }}
               animate={{
-                clipPath: "inset(0 0 0% 0 round 24px)",
+                clipPath: "inset(0 0 0% 0 round 23px)",
                 transition: {
                   duration: 0.25,
                 },
               }}
               exit={{
-                clipPath: "inset(0 0 100% 0 round 24px)",
+                clipPath: "inset(0 0 100% 0 round 23px)",
                 transition: {
                   duration: 0.15,
                 },
@@ -117,7 +116,6 @@ export function AppNavigation() {
             >
               <MastersetSelector />
               <NavigationLinks />
-              <ProfileCard />
             </motion.div>
           )}
         </AnimatePresence>

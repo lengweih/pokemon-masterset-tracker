@@ -30,6 +30,13 @@ const fontSize = {
 
 const config = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  // Only apply hover styles on devices that actually support hovering, so touch
+  // taps don't leave elements stuck in a "hovered" state (e.g. closing the
+  // variant modal would otherwise stick the hover overlay on the card behind
+  // the X). On touch, collection cards just open the detail page on tap.
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       backgroundImage: {
@@ -68,7 +75,6 @@ const config = {
       },
       fontSize,
       spacing: {
-        "22": designTokens.spacing["22"],
         page: designTokens.spacing.page,
         card: designTokens.spacing.card,
         section: designTokens.spacing.section,

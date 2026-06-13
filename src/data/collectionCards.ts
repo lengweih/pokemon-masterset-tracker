@@ -186,6 +186,14 @@ const collectionCardsById = new Map<string, CollectionCard>(
 export const getCollectionCardById = (cardId: string) =>
   collectionCardsById.get(cardId);
 
+// SVP black-star promo cards (`svp-` ids) reuse the master set's secret-rare
+// numbers but belong to a different expansion, so they're labeled distinctly
+// wherever the set name is shown (card detail, variant modal).
+export const isSvpCard = (card: CollectionCard) => card.id.startsWith("svp-");
+
+export const getCardSetName = (card: CollectionCard) =>
+  isSvpCard(card) ? "Scarlet Violet Promo" : "Prismatic Evolutions";
+
 // Progress scope per view: master counts master variants; grandmaster is the
 // full set — every master + grandmaster variant (incl. the SVP promo cards).
 export const getCollectionViewProgress = (

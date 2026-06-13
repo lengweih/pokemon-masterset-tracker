@@ -97,7 +97,6 @@ export const designTokens = {
     },
   },
   spacing: {
-    "22": "88px",
     page: "32px",
     card: "24px",
     section: "48px",
