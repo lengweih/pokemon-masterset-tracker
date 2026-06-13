@@ -92,18 +92,18 @@ export function AppNavigation() {
           {isMobileMenuOpen && (
             <motion.div
               id="mobile-navigation-menu"
-              className="surface-panel rounded-[23px] pt-4 absolute left-0 right-0 top-full z-40 mt-3 grid origin-top gap-3"
+              className="surface-panel rounded-card pt-4 absolute left-0 right-0 top-full z-40 mt-3 grid origin-top gap-3"
               initial={{
-                clipPath: "inset(0 0 100% 0 round 23px)",
+                clipPath: "inset(0 0 100% 0 round 20px)",
               }}
               animate={{
-                clipPath: "inset(0 0 0% 0 round 23px)",
+                clipPath: "inset(0 0 0% 0 round 20px)",
                 transition: {
                   duration: 0.25,
                 },
               }}
               exit={{
-                clipPath: "inset(0 0 100% 0 round 23px)",
+                clipPath: "inset(0 0 100% 0 round 20px)",
                 transition: {
                   duration: 0.15,
                 },
