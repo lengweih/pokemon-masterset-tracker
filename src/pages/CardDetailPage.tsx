@@ -6,6 +6,7 @@ import { VariantOwnershipRow } from "../components/collection/VariantOwnershipRo
 import { WishlistButton } from "../components/collection/WishlistButton";
 import {
   collectionCardsByView,
+  getCardSetName,
   getCollectionCardById,
 } from "../data/collectionCards";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
@@ -24,12 +25,6 @@ import type {
   CollectionCard,
   OwnedVariantsByCardId,
 } from "../types/collection";
-
-// SVP black-star promo cards share numbers with the master set's secret rares,
-// so they're labeled as their own set to avoid confusion.
-const isSvpCard = (card: CollectionCard) => card.id.startsWith("svp-");
-const getCardSetName = (card: CollectionCard) =>
-  isSvpCard(card) ? "Scarlet Violet Promo" : "Prismatic Evolutions";
 
 // Preserves the `from` context so continued prev/next navigation stays within
 // the same list the user was browsing.
@@ -143,7 +138,9 @@ export function CardDetailPage() {
     fromContext === "wishlist" ? "Back to Wishlist" : "Back to Collection";
 
   // Tells the user which list the prev/next buttons cycle through (and where in
-  // it they are), so it's clear the detail view is scoped to that tab.
+  // it they are), so it's clear the detail view is scoped to that tab. With no
+  // `from` context (e.g. a bare deep link), fall back to the card's own set —
+  // matching the list `neighborCards` walks — so the indicator still shows.
   const browsingContextLabel =
     fromContext === "grandmaster"
       ? "Grandmaster set"
@@ -151,7 +148,9 @@ export function CardDetailPage() {
         ? "Master set"
         : fromContext === "wishlist"
           ? "Wishlist"
-          : null;
+          : card.id.startsWith("svp-")
+            ? "Grandmaster set"
+            : "Master set";
   const browsingPosition = currentIndex >= 0 ? currentIndex + 1 : null;
 
   const ownedVariantIds = getOwnedVariantIds(card, ownedVariantsByCardId);

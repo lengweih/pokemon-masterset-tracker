@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
+import { getCardSetName } from "../../data/collectionCards";
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 import { getCompletionPercentage } from "../../lib/collectionOwnership";
 import type { CollectionCard as CollectionCardModel } from "../../types/collection";
@@ -84,7 +85,7 @@ export function VariantSelectorModal({
 
             <div className="min-w-0">
               <p className="text-label uppercase tracking-[0.18em] text-brand-blue">
-                Prismatic Evolutions
+                {getCardSetName(card)}
               </p>
               <h2
                 id="variant-selector-title"
