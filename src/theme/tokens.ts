@@ -48,29 +48,21 @@ export const designTokens = {
       track: "#E9ECF3",
     },
     variant: {
-      base: {
-        bg: "#EEF2FF",
-        text: "#5B5CF0",
+      default: {
+        bg: "#F3F4F6",
+        text: "#64748B",
       },
       reverse: {
         bg: "#E0F2FE",
         text: "#0284C7",
       },
       "poke-ball": {
-        bg: "#F3F4F6",
-        text: "#64748B",
-      },
-      "master-ball": {
         bg: "#FCE7F3",
         text: "#DB2777",
       },
-      promo: {
-        bg: "#ECFDF5",
-        text: "#059669",
-      },
-      cosmos: {
-        bg: "#E0F2FE",
-        text: "#0369A1",
+      "master-ball": {
+        bg: "#F3E8FF",
+        text: "#9333EA",
       },
     },
   },

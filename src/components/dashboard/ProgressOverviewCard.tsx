@@ -1,9 +1,13 @@
 import { ChartNoAxesCombined } from "lucide-react";
 
-import { dashboardProgressItems } from "../../data/dashboard";
+import { getDashboardProgressItems } from "../../data/dashboard";
+import { useCollectionStats } from "../../contexts/CollectionStatsContext";
 import { DashboardCardHeader } from "./DashboardCardHeader";
 
 export function ProgressOverviewCard() {
+  const stats = useCollectionStats();
+  const progressItems = getDashboardProgressItems(stats);
+
   return (
     <article className="surface-card h-full p-6">
       <DashboardCardHeader
@@ -14,7 +18,7 @@ export function ProgressOverviewCard() {
       />
 
       <div className="mt-7 grid gap-10">
-        {dashboardProgressItems.map((item) => (
+        {progressItems.map((item) => (
           <div key={item.label}>
             <div className="flex items-center justify-between gap-4">
               <p className="text-sm font-medium leading-none text-text-primary">

@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface PageHeaderProps {
   description: string;
@@ -6,9 +7,11 @@ interface PageHeaderProps {
   icon: LucideIcon;
   title: string;
   titleId?: string;
+  children?: ReactNode;
 }
 
 export function PageHeader({
+  children,
   description,
   eyebrow,
   icon: Icon,
@@ -16,14 +19,17 @@ export function PageHeader({
   titleId,
 }: PageHeaderProps) {
   return (
-    <div className="surface-card relative p-6 sm:p-8">
+    <section
+      aria-labelledby={titleId}
+      className="surface-card relative p-6 sm:p-8"
+    >
       <div className="max-w-2xl pr-16 xs:pr-20 sm:pr-24">
         <p className="text-label uppercase tracking-[0.18em] text-brand-blue">
           {eyebrow}
         </p>
         <h1
           id={titleId}
-          className="mt-3 text-2xl font-bold leading-tight text-text-primary xs:text-3xl sm:text-[42px]"
+          className="gradient-text mt-1 text-3xl font-bold leading-tight xs:text-[38px] sm:text-[42px]"
         >
           {title}
         </h1>
@@ -38,6 +44,8 @@ export function PageHeader({
       >
         <Icon className="h-7 w-7" strokeWidth={2} />
       </div>
-    </div>
+
+      {children ? <div className="mt-6">{children}</div> : null}
+    </section>
   );
 }

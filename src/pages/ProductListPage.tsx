@@ -1,35 +1,43 @@
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { Package } from "lucide-react";
 
+import { PageHeader } from "../components/common/PageHeader";
 import { ProductCard } from "../components/product/ProductCard";
 import { ProductSummaryCard } from "../components/product/ProductSummaryCard";
 import {
   DataViewToolbar,
-  type DataViewMode,
   type DataViewSortOption,
 } from "../components/ui/DataViewToolbar";
 import { Pagination } from "../components/ui/Pagination";
 import { products } from "../data/products";
 import { usePagination } from "../hooks/usePagination";
+import {
+  THREE_COLUMN_CARD_GRID,
+  useResponsiveGridPageSize,
+} from "../hooks/useResponsiveGridPageSize";
 import type { Product, ProductSortOption } from "../types/product";
 
-const DEFAULT_PRODUCTS_PER_PAGE = 8;
-const PRODUCT_PAGE_SIZE_OPTIONS = [4, 8, 12, 16] as const;
+const productViewEnterTransition = {
+  duration: 0.3,
+  ease: [0.64, 0, 0.78, 0],
+} as const;
 
 const productSortOptions = [
   {
-    label: "Sort by: A-Z",
+    label: "A-Z",
     value: "name-asc",
   },
   {
-    label: "Sort by: Z-A",
+    label: "Z-A",
     value: "name-desc",
   },
   {
-    label: "Sort by: Newest",
+    label: "Newest",
     value: "release-newest",
   },
   {
-    label: "Sort by: Oldest",
+    label: "Oldest",
     value: "release-oldest",
   },
 ] satisfies readonly DataViewSortOption<ProductSortOption>[];
@@ -58,8 +66,8 @@ const sortProducts = (
 export function ProductListPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState<ProductSortOption>("name-asc");
-  const [viewMode, setViewMode] = useState<DataViewMode>("grid");
-  const [pageSize, setPageSize] = useState(DEFAULT_PRODUCTS_PER_PAGE);
+  const { gridClass, pageSize } =
+    useResponsiveGridPageSize(THREE_COLUMN_CARD_GRID);
 
   const visibleProducts = useMemo(() => {
     const normalizedSearchQuery = searchQuery.trim().toLowerCase();
@@ -82,7 +90,7 @@ export function ProductListPage() {
     pageSize,
   });
   const gridPlaceholderCount =
-    viewMode === "grid" && pagination.totalPages > 1
+    pagination.totalPages > 1
       ? Math.max(pagination.pageSize - pagination.currentItems.length, 0)
       : 0;
 
@@ -96,36 +104,19 @@ export function ProductListPage() {
     pagination.goToPage(1);
   };
 
-  const handlePageSizeChange = (value: number) => {
-    setPageSize(value);
-    pagination.goToPage(1);
-  };
-
   return (
-    <section
-      aria-labelledby="product-list-title"
-      className="grid w-full self-start gap-3 lg:h-full lg:min-h-0 lg:self-stretch lg:grid-rows-[auto_minmax(0,1fr)]"
-    >
-      <div className="surface-card p-6 sm:p-8">
-        <div className="max-w-3xl">
-          <p className="text-label uppercase tracking-[0.18em] text-brand-blue">
-            Product List
-          </p>
-          <h1
-            id="product-list-title"
-            className="mt-1 text-3xl font-bold leading-tight text-text-primary xs:text-[38px] sm:text-[42px]"
-          >
-            Product List
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm font-medium leading-[1.6] text-text-secondary xs:text-body">
-            Browse all related products for Prismatic Evolutions.
-          </p>
-        </div>
-
-        <div className="mt-6 max-w-[270px]">
+    <section className="grid w-full self-start gap-3 lg:h-full lg:min-h-0 lg:self-stretch lg:grid-rows-[auto_minmax(0,1fr)]">
+      <PageHeader
+        description="Browse all related products for Prismatic Evolutions."
+        eyebrow="Product List"
+        icon={Package}
+        title="Product List"
+        titleId="product-list-title"
+      >
+        <div className="lg:max-w-[270px]">
           <ProductSummaryCard totalProducts={products.length} />
         </div>
-      </div>
+      </PageHeader>
 
       <div className="surface-card grid gap-5 p-4 sm:p-6 lg:min-h-0 lg:grid-rows-[auto_minmax(0,1fr)_auto]">
         <DataViewToolbar
@@ -133,44 +124,40 @@ export function ProductListPage() {
           searchLabel="Search products"
           searchPlaceholder="Search products..."
           searchValue={searchQuery}
-          pageSizeLabel="Products per page"
-          pageSizeOptions={PRODUCT_PAGE_SIZE_OPTIONS}
-          pageSizeSelectId="product-page-size"
-          pageSizeValue={pageSize}
-          sortLabel="Sort products"
+          sortLabel="Sort"
           sortOptions={productSortOptions}
           sortSelectId="product-sort"
           sortValue={sortOption}
-          viewMode={viewMode}
-          onPageSizeChange={handlePageSizeChange}
           onSearchChange={handleSearchChange}
           onSortChange={handleSortChange}
-          onViewModeChange={setViewMode}
         />
 
         {pagination.currentItems.length > 0 ? (
-          <div
-            className={
-              viewMode === "grid"
-                ? "grid min-h-0 content-start gap-3 sm:grid-cols-2 xl:grid-cols-4"
-                : "grid min-h-0 content-start gap-3"
-            }
+          <motion.div
+            key={pagination.currentPage}
+            initial={{ opacity: 0.82 }}
+            animate={{ opacity: 1 }}
+            className={gridClass}
+            transition={productViewEnterTransition}
           >
             {pagination.currentItems.map((product) => (
-              <ProductCard
+              <motion.div
                 key={product.id}
-                product={product}
-                viewMode={viewMode}
-              />
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={productViewEnterTransition}
+              >
+                <ProductCard product={product} />
+              </motion.div>
             ))}
             {Array.from({ length: gridPlaceholderCount }, (_, index) => (
               <div
                 key={`product-placeholder-${index}`}
                 aria-hidden="true"
-                className="invisible h-60 w-full rounded-card sm:h-64 xl:h-60"
+                className="invisible h-56 w-full rounded-card sm:h-64 xl:h-60"
               />
             ))}
-          </div>
+          </motion.div>
         ) : (
           <div className="empty-state lg:h-full">
             <p className="text-card text-text-primary">No products found</p>

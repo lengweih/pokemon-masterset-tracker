@@ -8,6 +8,5 @@ export const APP_CONFIG = {
   collector: {
     initials: "CB",
     name: "CollectorB",
-    progressLabel: "72% Complete",
   },
 } as const;

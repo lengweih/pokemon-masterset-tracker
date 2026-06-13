@@ -214,6 +214,27 @@
     box-shadow: var(--inner-ring);
   }
 
+  .data-view-field {
+    @apply h-12 w-full appearance-none rounded-button border border-border-strong bg-surface px-4 text-body text-text-primary transition-colors duration-180 ease-premium placeholder:text-text-muted;
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: var(--inner-ring);
+    outline: none;
+  }
+
+  .data-view-field::-webkit-search-cancel-button,
+  .data-view-field::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .data-view-field:focus,
+  .data-view-field:focus-visible {
+    border-color: var(--border-strong);
+    box-shadow: var(--inner-ring);
+    outline: none;
+  }
+
   .field-label {
     @apply text-label text-text-secondary;
   }
@@ -225,7 +246,7 @@
   }
 
   .badge-variant {
-    @apply bg-variant-base-bg text-variant-base-text;
+    @apply bg-variant-default-bg text-variant-default-text;
   }
 
   .badge-reverse {
@@ -240,12 +261,8 @@
     @apply bg-variant-master-ball-bg text-variant-master-ball-text;
   }
 
-  .badge-promo {
-    @apply bg-variant-promo-bg text-variant-promo-text;
-  }
-
-  .badge-cosmos {
-    @apply bg-variant-cosmos-bg text-variant-cosmos-text;
+  .badge-grandmaster {
+    @apply bg-primary-light text-brand-violet;
   }
 
   .badge-success {
