@@ -1,9 +1,6 @@
 import { createContext, useContext } from "react";
 
-import {
-  getCollectionViewProgress,
-  isCollectionViewComingSoon,
-} from "../data/collectionCards";
+import { getCollectionViewProgress } from "../data/collectionCards";
 import type {
   CollectionStatsSummary,
   OwnedVariantsByCardId,
@@ -24,13 +21,7 @@ export const computeCollectionStats = (
     ownedVariantsByCardId,
   );
 
-  return {
-    master,
-    grandmaster: {
-      ...grandmaster,
-      comingSoon: isCollectionViewComingSoon("grandmaster"),
-    },
-  };
+  return { master, grandmaster };
 };
 
 // Reads the shared collection stats. Must be used under a

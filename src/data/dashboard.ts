@@ -18,15 +18,9 @@ export const getDashboardProgressItems = (
   {
     fill: "linear-gradient(90deg, #7B61FF 0%, #C061FF 100%)",
     label: "Grandmaster Set Progress",
-    percentage: stats.grandmaster.comingSoon
-      ? "—"
-      : `${stats.grandmaster.percentage}%`,
-    total: stats.grandmaster.comingSoon
-      ? "Coming soon"
-      : `${stats.grandmaster.collected} / ${stats.grandmaster.total}`,
-    width: stats.grandmaster.comingSoon
-      ? "0%"
-      : `${stats.grandmaster.percentage}%`,
+    percentage: `${stats.grandmaster.percentage}%`,
+    total: `${stats.grandmaster.collected} / ${stats.grandmaster.total}`,
+    width: `${stats.grandmaster.percentage}%`,
   },
 ];
 

@@ -1,46 +1,85 @@
-# Pokemon Masterset Tracker
+# Pokémon Masterset Tracker
 
-A lightweight React app for tracking personal Pokemon TCG master sets, currently focused on Prismatic Evolutions.
+A lightweight, personal-use React app for tracking Pokémon TCG master sets —
+currently the **Prismatic Evolutions** master set and grandmaster (promo) set.
+It's a small static dashboard: card data lives in typed files, ownership/wishlist
+state lives in `localStorage`, and it's built to deploy easily to GitHub Pages.
 
-The app is built as a small personal-use dashboard with static data, local state, Tailwind styling, and GitHub Pages-friendly routing.
 
-## Tech Stack
+## Tech stack
 
-- React
-- Vite
-- TypeScript
+- React + Vite + TypeScript
 - Tailwind CSS
-- React Router with `HashRouter`
-- Framer Motion for small UI animations
+- React Router (`HashRouter`, for GitHub Pages)
+- Framer Motion (small UI animations)
+- Embla Carousel (dashboard wishlist preview)
+- State persisted in `localStorage`
+
+## Getting started
+
+Requires Node 22+ (CI builds on Node 22).
+
+```bash
+npm install
+npm run dev        # local dev server
+```
 
 ## Scripts
 
 ```bash
-npm run dev
-npm run build
-npm run lint
-npm run preview
+npm run dev              # start dev server
+npm run build            # type-check + production build to dist/
+npm run lint             # eslint
+npm run preview          # preview the production build
+npm run trim-images      # normalize product images (see Images)
+npm run images-to-webp   # convert normalized product PNGs to WebP
 ```
 
-## Project Notes
+## Updating content (the important bit)
 
-- Read `AGENTS.md` before changing project structure or app behavior.
-- Read `DESIGN.md` before making UI changes.
-- Keep implementation simple, readable, and easy to deploy to GitHub Pages.
+Where to change things when adding/editing content later:
+
+- **Cards (images):** drop `PRE-<number>.webp` into `src/assets/images/cards/`.
+  They auto-register by filename via a glob — no import needed.
+- **Card / variant data:** `src/data/masterSet.ts` (booster-pack variants) and
+  `src/data/grandmasterSet.ts` (promo variants + SVP black-star promos). They're
+  joined into the rendered cards in `src/data/collectionCards.ts`.
+- **Products:** add entries in `src/data/products.ts` and art in
+  `src/assets/images/products/`. Each product's promo card list is **derived**
+  from `grandmasterSet.ts`, so you don't hand-maintain it.
+- **A new set:** add it to `src/data/mastersetOptions.ts` (the set selector) and
+  set `CURRENT_SET_ID` in `src/lib/storageKeys.ts` (storage keys are scoped per
+  set so sets don't share ownership data).
+- **Changelog & app version:** edit `src/data/changelog.ts`. Entries are
+  **newest-first**; the top entry's `version` automatically becomes the version
+  shown in the footer (there is no separate version constant to update).
+
+## Images
+
+- Everything shipped is **WebP** (cards, products, logos, hero, background); the
+  favicon is a small PNG.
+- Card files must be named `PRE-<number>.webp` (master set) or
+  `SVP-<number>.webp` (Scarlet & Violet promos) — that naming is how they map to
+  card data.
+- New **product** images: run `npm run trim-images` then `npm run images-to-webp`
+  to normalize + compress them.
+- One-off images (logos, hero, decorative): just convert to WebP and keep them
+  sized close to how they're displayed (they're not auto-processed).
 
 ## Deployment
 
-Build output is generated in `dist/` and is intended to stay static-hosting friendly.
+- Work on the `develop` branch; **merge/push to `main` to release.**
+- `.github/workflows/deploy.yml` runs on pushes to `main`: it builds the Vite app
+  and publishes `dist/` to GitHub Pages. In GitHub, `Settings → Pages → Source`
+  must be set to **GitHub Actions**.
+- `HashRouter` is used so deep links work on Pages; the Vite `base` path is set
+  automatically from the repo name in CI.
+- Production URL: `https://lengweih.github.io/pokemon-masterset-tracker/`
 
-This project deploys to GitHub Pages through `.github/workflows/deploy.yml`.
-The workflow runs on pushes to `main`, builds the Vite app, uploads `dist/`,
-and publishes it with GitHub Pages.
+## Project docs
 
-For this repository, the production URL is:
-
-```txt
-https://lengweih.github.io/pokemon-masterset-tracker/
-```
-
-In GitHub, set `Settings -> Pages -> Build and deployment -> Source` to
-`GitHub Actions`.
+- `AGENTS.md` — architecture, folder structure, data model, coding conventions.
+  Read before changing structure or behavior.
+- `DESIGN.md` — the design system (colors, spacing, components, page layouts).
+  Read before UI changes.
+- `TESTING.md` — a manual test checklist to run through after changes.

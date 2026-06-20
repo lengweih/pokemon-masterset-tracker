@@ -12,7 +12,6 @@ import {
   collectionCardRarityLabels,
   collectionCardRarityOrder,
   collectionCardsByView,
-  isCollectionViewComingSoon,
 } from "../../data/collectionCards";
 import { usePagination } from "../../hooks/usePagination";
 import {
@@ -269,7 +268,6 @@ export function CollectionBrowser({
   const { gridClass, pageSize } = useResponsiveGridPageSize(
     FOUR_COLUMN_CARD_GRID,
   );
-  const isComingSoon = isCollectionViewComingSoon(activeView);
   const activeCards = collectionCardsByView[activeView];
   const wishlistCardIdSet = useMemo(
     () => new Set(wishlistCardIds),
@@ -500,28 +498,12 @@ export function CollectionBrowser({
 
         <div
           aria-labelledby={getCollectionTabId(activeView)}
-          className={
-            isComingSoon
-              ? "grid lg:min-h-0"
-              : "grid gap-5 lg:min-h-0 lg:grid-rows-[auto_minmax(0,1fr)_auto]"
-          }
+          className="grid gap-5 lg:min-h-0 lg:grid-rows-[auto_minmax(0,1fr)_auto]"
           id={COLLECTION_TAB_PANEL_ID}
           role="tabpanel"
           tabIndex={0}
         >
-          {isComingSoon ? (
-            <div className="empty-state lg:h-full">
-              <p className="text-card text-text-primary">
-                Grandmaster Set coming soon
-              </p>
-              <p className="max-w-md text-sm font-medium text-text-secondary">
-                Grandmaster set tracking isn&apos;t available yet. Switch to the
-                Master Set to track your Prismatic Evolutions collection.
-              </p>
-            </div>
-          ) : (
-            <>
-              <DataViewToolbar
+          <DataViewToolbar
                 filters={collectionFilters}
                 searchInputId="collection-search"
                 searchLabel="Search cards"
@@ -591,16 +573,14 @@ export function CollectionBrowser({
                 </div>
               )}
 
-              <Pagination
-                currentPage={pagination.currentPage}
-                itemName="card"
-                pageSize={pagination.pageSize}
-                totalItems={pagination.totalItems}
-                totalPages={pagination.totalPages}
-                onPageChange={pagination.goToPage}
-              />
-            </>
-          )}
+          <Pagination
+            currentPage={pagination.currentPage}
+            itemName="card"
+            pageSize={pagination.pageSize}
+            totalItems={pagination.totalItems}
+            totalPages={pagination.totalPages}
+            onPageChange={pagination.goToPage}
+          />
         </div>
       </div>
 

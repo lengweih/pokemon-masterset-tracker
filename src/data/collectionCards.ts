@@ -172,13 +172,6 @@ export const collectionCardsByView = {
   grandmaster: cardsForSet("grandmaster"),
 } satisfies Record<CollectionViewId, readonly CollectionCard[]>;
 
-// Views listed here render a "coming soon" placeholder instead of the browser.
-// Currently empty — both master and grandmaster are live.
-const comingSoonCollectionViews = new Set<CollectionViewId>([]);
-
-export const isCollectionViewComingSoon = (view: CollectionViewId) =>
-  comingSoonCollectionViews.has(view);
-
 const collectionCardsById = new Map<string, CollectionCard>(
   allCollectionCards.map((card) => [card.id, card]),
 );

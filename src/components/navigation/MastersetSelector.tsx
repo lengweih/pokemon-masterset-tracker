@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { mastersetOptions } from "../../data/mastersets";
+import { mastersetOptions } from "../../data/mastersetOptions";
 import { DropdownSelect } from "../ui/DropdownSelect";
 
 const mastersetDropdownOptions = mastersetOptions.map((masterset) => ({
