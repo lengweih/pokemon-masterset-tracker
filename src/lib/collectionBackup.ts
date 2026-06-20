@@ -1,4 +1,4 @@
-import { mastersetOptions } from "../data/mastersets";
+import { mastersetOptions } from "../data/mastersetOptions";
 import { notifyLocalStorageChange } from "../hooks/useLocalStorageState";
 import type { OwnedVariantsByCardId } from "../types/collection";
 import { isOwnedVariantsByCardId, isStringArray } from "./collectionOwnership";

@@ -1,7 +1,7 @@
 import { ExternalLink, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { appVersion } from "../data/changelog";
+import { appVersion } from "../../data/changelog";
 
 const APP_NAME = "Masterset Tracker";
 const COPYRIGHT_YEAR = 2026;

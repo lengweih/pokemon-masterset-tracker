@@ -45,7 +45,7 @@ export interface CollectionPreferences {
 
 export interface CollectionStatsSummary {
   master: CollectionProgress;
-  grandmaster: CollectionProgress & { comingSoon: boolean };
+  grandmaster: CollectionProgress;
 }
 
 export type CollectionRarityFilter = "all" | CollectionCardRarity;

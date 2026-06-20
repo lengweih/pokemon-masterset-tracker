@@ -1,7 +1,7 @@
 import { HashRouter, Route, Routes } from "react-router-dom";
 
-import { Footer } from "./components/Footer";
-import { ScrollToTop } from "./components/ScrollToTop";
+import { Footer } from "./components/common/Footer";
+import { ScrollToTop } from "./components/common/ScrollToTop";
 import { AppNavigation } from "./components/navigation/AppNavigation";
 import { CollectionStatsProvider } from "./contexts/CollectionStatsProvider";
 import CardDetailPage from "./pages/CardDetailPage";
