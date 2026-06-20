@@ -1,7 +1,12 @@
 import { ExternalLink, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { APP_CONFIG } from "../config/app";
+import { appVersion } from "../data/changelog";
+
+const APP_NAME = "Masterset Tracker";
+const COPYRIGHT_YEAR = 2026;
+const GITHUB_URL = "https://github.com/lengweih";
+const FOOTER_TAGLINE = "Built for collectors";
 
 export function Footer() {
   return (
@@ -11,11 +16,11 @@ export function Footer() {
     >
       <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 sm:justify-start sm:gap-x-8">
         <p className="whitespace-nowrap text-text-secondary">
-          © {APP_CONFIG.copyrightYear} {APP_CONFIG.name}
+          © {COPYRIGHT_YEAR} {APP_NAME}
         </p>
         <a
           className="inline-flex items-center gap-2 text-text-secondary transition-colors duration-180 ease-premium hover:text-text-primary"
-          href={APP_CONFIG.githubUrl}
+          href={GITHUB_URL}
           rel="noreferrer"
           target="_blank"
         >
@@ -55,12 +60,12 @@ export function Footer() {
               strokeWidth={1.5}
             />
           </motion.span>
-          <span>{APP_CONFIG.footerTagline}</span>
+          <span>{FOOTER_TAGLINE}</span>
         </span>
         <span aria-hidden="true" className="text-text-muted">
           •
         </span>
-        <span className="whitespace-nowrap">{APP_CONFIG.version}</span>
+        <span className="whitespace-nowrap">{appVersion}</span>
       </div>
     </footer>
   );

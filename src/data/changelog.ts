@@ -1,26 +1,26 @@
 import type { ChangelogEntry } from "../types/changelog";
 
-export const changelogEntries: ChangelogEntry[] = [
+/**
   {
-    date: "MAY 20, 2024",
-    description:
-      "Improved variant grouping and fixed sorting issues in collection view.",
-    dotColor: "#2F80FF",
-    title: "Variant Grouping Improvements",
+    date: "JUN 20, 2026",
+    description: "",
+    dotColor: "#2F80FF" or "#7B61FF" or "#C061FF",
+    title: "",
     version: "v1.0.0",
   },
+*/
+export const changelogEntries: ChangelogEntry[] = [
   {
-    date: "MAY 15, 2024",
-    description: "Faster card search and recent cards shortcuts added.",
-    dotColor: "#7B61FF",
-    title: "Quick Add Enhancements",
-    version: "v0.9.0",
-  },
-  {
-    date: "MAY 10, 2024",
-    description: "Price data now updates daily for better accuracy.",
+    date: "JUN 20, 2026",
+    description:
+      "This release includes all the core features and functionalities.",
     dotColor: "#C061FF",
-    title: "Price Guide Integration",
-    version: "v0.8.0",
+    title: "Official Release",
+    version: "v1.0.0",
   },
 ];
+
+// The app's current version is the newest changelog entry's version (entries are
+// ordered newest-first). The footer reads this, so bumping the changelog keeps
+// the displayed version in sync — no separate version field to remember.
+export const appVersion = changelogEntries[0]?.version ?? "v0.0.0";

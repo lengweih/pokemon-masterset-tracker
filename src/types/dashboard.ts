@@ -1,18 +1,3 @@
-export type DashboardSummaryStatIcon =
-  | "award"
-  | "clipboard-check"
-  | "crown"
-  | "grip";
-
-export interface DashboardSummaryStat {
-  color: string;
-  icon: DashboardSummaryStatIcon;
-  iconBackground: string;
-  label: string;
-  supportingText: string;
-  value: string;
-}
-
 export interface DashboardProgressItem {
   fill: string;
   label: string;

@@ -86,7 +86,7 @@
     min-height: 100vh;
     margin: 0;
     background-color: var(--bg);
-    background-image: url("./assets/images/bg-pattern-l.jpg");
+    background-image: url("./assets/images/backgrounds/bg-pattern.webp");
     background-position: top left;
     background-repeat: repeat;
     color: var(--text-primary);

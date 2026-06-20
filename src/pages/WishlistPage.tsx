@@ -118,6 +118,15 @@ export function WishlistPage() {
       wishlistCards.reduce((count, card) => count + card.variants.length, 0),
     [wishlistCards],
   );
+  const ownedVariants = useMemo(
+    () =>
+      wishlistCards.reduce(
+        (count, card) =>
+          count + getOwnedVariantIds(card, ownedVariantsByCardId).length,
+        0,
+      ),
+    [wishlistCards, ownedVariantsByCardId],
+  );
   const hasWishlistedCards = wishlistCards.length > 0;
 
   const visibleWishlistCards = useMemo(() => {
@@ -167,6 +176,7 @@ export function WishlistPage() {
   return (
     <section className="grid w-full self-start gap-3 lg:h-full lg:min-h-0 lg:self-stretch lg:grid-rows-[auto_minmax(0,1fr)]">
       <WishlistHero
+        ownedVariants={ownedVariants}
         totalVariants={totalVariants}
         wishlistedCount={wishlistCards.length}
       />

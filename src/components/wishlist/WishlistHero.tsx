@@ -5,11 +5,13 @@ import { StatCard } from "../common/StatCard";
 
 interface WishlistHeroProps {
   wishlistedCount: number;
+  ownedVariants: number;
   totalVariants: number;
 }
 
 export function WishlistHero({
   wishlistedCount,
+  ownedVariants,
   totalVariants,
 }: WishlistHeroProps) {
   return (
@@ -30,8 +32,8 @@ export function WishlistHero({
         <StatCard
           className="xs:flex-1 lg:w-[270px] lg:flex-none"
           icon={Sparkles}
-          label="Total Variants"
-          value={totalVariants}
+          label="Variants Owned"
+          value={totalVariants > 0 ? `${ownedVariants} / ${totalVariants}` : 0}
         />
       </div>
     </PageHeader>

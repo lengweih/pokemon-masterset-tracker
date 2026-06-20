@@ -1,5 +1,4 @@
-import heroImage from "./images/screens/hero-image.png";
-import titleIcon from "./images/screens/title-icon.png";
+import heroImage from "./images/decorative/hero-image.webp";
 
 // Build a `{ fileNameWithoutExtension -> url }` map from an eager glob so new
 // images auto-register without editing this file.
@@ -20,7 +19,9 @@ const cardImagesByFileName = toFileNameMap(
   }),
 );
 const fallbackCardImage =
-  cardImagesByFileName["PRE-001"] ?? Object.values(cardImagesByFileName)[0] ?? "";
+  cardImagesByFileName["PRE-001"] ??
+  Object.values(cardImagesByFileName)[0] ??
+  "";
 
 const productImagesByFileName = toFileNameMap(
   import.meta.glob<string>("./images/products/*.webp", {
@@ -35,9 +36,9 @@ export const getProductImage = (fileName: string): string =>
   productImagesByFileName[fileName] ?? "";
 
 // Logos: variant-icon artwork (Poké Ball, Play! Pokémon, etc.) plus the set
-// logo. New files auto-register without editing this file.
+// logo, all stored as WebP. New files auto-register without editing this file.
 const logoImagesByFileName = toFileNameMap(
-  import.meta.glob<string>("./images/logos/*.{png,svg}", {
+  import.meta.glob<string>("./images/logos/*.webp", {
     eager: true,
     import: "default",
   }),
@@ -59,5 +60,4 @@ export const images = {
   cards: cardImages,
   heroImage,
   setLogo,
-  titleIcon,
 } as const;
