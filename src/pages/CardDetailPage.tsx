@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 
+import { TiltCard } from "../components/collection/TiltCard";
 import { VariantOwnershipRow } from "../components/collection/VariantOwnershipRow";
 import { WishlistButton } from "../components/collection/WishlistButton";
 import {
@@ -238,14 +239,7 @@ export function CardDetailPage() {
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] lg:gap-10">
-          <div className="mx-auto w-full max-w-[300px] [container-type:inline-size]">
-            <img
-              alt={card.imageAlt}
-              className="aspect-[63/88] w-full rounded-[5.25cqw] object-cover shadow-soft-md"
-              decoding="async"
-              src={card.imageUrl}
-            />
-          </div>
+          <TiltCard alt={card.imageAlt} src={card.imageUrl} />
 
           <div className="min-w-0">
             <p className="text-label uppercase tracking-[0.18em] text-brand-blue">
