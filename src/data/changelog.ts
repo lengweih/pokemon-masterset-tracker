@@ -11,6 +11,13 @@ import type { ChangelogEntry } from "../types/changelog";
 */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    date: "JUN 28, 2026",
+    description: "Updated the hero image on dashboard screen.",
+    dotColor: "#7B61FF",
+    title: "Cosmetic Update",
+    version: "v1.0.1",
+  },
+  {
     date: "JUN 20, 2026",
     description:
       "This release includes all the core features and functionalities.",
