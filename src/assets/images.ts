@@ -1,5 +1,3 @@
-import heroImage from "./images/decorative/hero-image.webp";
-
 // Build a `{ fileNameWithoutExtension -> url }` map from an eager glob so new
 // images auto-register without editing this file.
 const toFileNameMap = (modules: Record<string, string>) =>
@@ -51,6 +49,19 @@ export const getLogoImage = (fileName: string): string =>
 
 const setLogo = getLogoImage("sv8pt5-logo");
 
+// Eeveelution "diamond" hero artwork (decorative/hero-<name>.webp) used by the
+// dashboard hero mosaic. Excludes the old combined hero-image. Order doesn't
+// matter — the mosaic places them randomly.
+const decorativeImagesByFileName = toFileNameMap(
+  import.meta.glob<string>("./images/decorative/hero-*.webp", {
+    eager: true,
+    import: "default",
+  }),
+);
+export const eeveelutionHeroImages = Object.entries(decorativeImagesByFileName)
+  .filter(([fileName]) => fileName !== "hero-image")
+  .map(([, url]) => url);
+
 export const cardImages = {
   byFileName: cardImagesByFileName,
   sample: fallbackCardImage,
@@ -58,6 +69,5 @@ export const cardImages = {
 
 export const images = {
   cards: cardImages,
-  heroImage,
   setLogo,
 } as const;

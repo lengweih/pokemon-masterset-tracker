@@ -291,7 +291,7 @@ section = 48px
 Avoid arbitrary spacing values unless there is a specific visual reason. Current accepted screenshot-matching exceptions are:
 
 ```txt
-Dashboard hero image width = 530px on xl screens
+Dashboard hero diamond tile width ≈ 100px (the eeveelution mosaic)
 Wishlist preview card thumbnail = w-24 (96px) below sm, w-28 (112px) at sm+
 ```
 
@@ -511,7 +511,7 @@ The dashboard column should use `self-start` so it keeps its natural content hei
 | Masterset selector button | `h-12` |
 | Navigation panel | `h-auto`, `lg:flex-1` |
 | Navigation links | four `h-14` rows with `gap-2` |
-| Dashboard hero | natural height, hero image hidden below `xl`, image width `530px` on `xl` |
+| Dashboard hero | natural height; eeveelution diamond mosaic on the right, hidden below `md` |
 | Dashboard wishlist preview | thumbnail carousel (Embla), viewport capped at 7 cards (`max-w-[744px]` / `sm:max-w-[856px]`), centered, fades in after images load |
 | Dashboard cards | stacked below `xl`, `xl:grid-cols-[1fr_0.9fr_1.1fr]` |
 | Footer | `h-14` on desktop, `min-h-14` with wrapping on small screens |
@@ -1103,8 +1103,12 @@ Current layout rules:
 - generous whitespace
 - gradient emphasis text allowed
 
-The current hero uses natural content height. The illustration is hidden below
-`xl` to prevent text/image collisions on smaller screens.
+The current hero uses natural content height. The right-side illustration is an
+**eeveelution diamond mosaic** (`HeroEeveelutionMosaic`): a static, full-bleed
+argyle lattice of the eeveelution "diamond" images (laid out like the page
+background) that fills the hero, with neighboring diamonds avoiding the same
+eeveelution. A left→right mask fades it into the title/details, and it's hidden
+below `md` to avoid text/image collisions on small screens.
 
 ## Wishlist Preview Rules
 
