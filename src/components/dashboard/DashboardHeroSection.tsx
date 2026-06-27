@@ -1,8 +1,8 @@
 import { ArrowRight, LayoutGrid } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { images } from "../../assets/images";
 import { ROUTES } from "../../routes/paths";
+import { HeroEeveelutionMosaic } from "./HeroEeveelutionMosaic";
 
 export function DashboardHeroSection() {
   return (
@@ -12,19 +12,9 @@ export function DashboardHeroSection() {
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-full xl:block"
+        className="pointer-events-none absolute inset-y-0 right-0 hidden w-full md:block"
       >
-        <img
-          src={images.heroImage}
-          alt=""
-          className="absolute -right-12 -top-6 h-auto w-[530px] max-w-none opacity-95"
-          style={{
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.64) 8%, #000 18%)",
-            maskImage:
-              "linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.64) 8%, #000 18%)",
-          }}
-        />
+        <HeroEeveelutionMosaic />
       </div>
 
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#fff_0%,#fff_42%,rgba(255,255,255,0.82)_54%,rgba(255,255,255,0.28)_68%,rgba(255,255,255,0)_82%)]" />

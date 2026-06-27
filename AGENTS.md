@@ -833,11 +833,9 @@ Use centralized image imports when useful.
 Example:
 
 ```ts
-import heroImage from "@/assets/images/hero-image.png";
-import setLogo from "@/assets/images/sv8pt5-logo-2x.png";
+import setLogo from "@/assets/images/sv8pt5-logo-2x.webp";
 
 export const images = {
-  heroImage,
   setLogo,
 };
 ```
@@ -845,8 +843,12 @@ export const images = {
 Use:
 
 ```tsx
-<img src={images.heroImage} alt="Prismatic collection artwork" />
+<img src={images.setLogo} alt="Prismatic Evolutions logo" />
 ```
+
+Sets of related images can also be auto-registered with `import.meta.glob`
+instead of listing each import (see `eeveelutionHeroImages` and the card glob in
+`src/assets/images.ts`).
 
 Do not scatter direct image imports throughout many screens if the same images are reused.
 
