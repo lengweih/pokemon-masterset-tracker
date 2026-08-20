@@ -1,6 +1,11 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
 import { TiltCard } from "../components/collection/TiltCard";
 import { VariantOwnershipRow } from "../components/collection/VariantOwnershipRow";
@@ -31,6 +36,21 @@ import type {
 // the same list the user was browsing.
 const cardDetailHref = (cardId: string, from: string | null) =>
   `/collection/${cardId}${from ? `?from=${from}` : ""}`;
+
+// Arrow keys must not steal typing (search fields) or the browser's own
+// back/forward shortcuts (e.g. Cmd/Alt + arrow).
+const isTypingTarget = (target: EventTarget | null) => {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return (
+    target.isContentEditable ||
+    target.tagName === "INPUT" ||
+    target.tagName === "TEXTAREA" ||
+    target.tagName === "SELECT"
+  );
+};
 
 function NeighborLink({
   card,
@@ -71,6 +91,7 @@ function NeighborLink({
 
 export function CardDetailPage() {
   const { cardId } = useParams<{ cardId: string }>();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const fromContext = searchParams.get("from");
   const card = cardId ? getCollectionCardById(cardId) : undefined;
@@ -107,6 +128,52 @@ export function CardDetailPage() {
       : collectionCardsByView.master;
   }, [fromContext, wishlistCardIds, cardId]);
 
+  const currentIndex = card
+    ? neighborCards.findIndex((neighbor) => neighbor.id === card.id)
+    : -1;
+  const previousCard =
+    currentIndex > 0 ? neighborCards[currentIndex - 1] : undefined;
+  const nextCard =
+    currentIndex >= 0 && currentIndex < neighborCards.length - 1
+      ? neighborCards[currentIndex + 1]
+      : undefined;
+  const previousHref = previousCard
+    ? cardDetailHref(previousCard.id, fromContext)
+    : null;
+  const nextHref = nextCard ? cardDetailHref(nextCard.id, fromContext) : null;
+
+  // Left/right arrows walk the same list as the prev/next buttons, so the user
+  // can cycle through a long set without reaching for the mouse.
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+        return;
+      }
+      if (
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        isTypingTarget(event.target)
+      ) {
+        return;
+      }
+
+      const href = event.key === "ArrowLeft" ? previousHref : nextHref;
+
+      if (href) {
+        event.preventDefault();
+        navigate(href);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [navigate, nextHref, previousHref]);
+
   if (!card) {
     return (
       <section className="grid w-full self-start gap-3">
@@ -124,15 +191,6 @@ export function CardDetailPage() {
     );
   }
 
-  const currentIndex = neighborCards.findIndex(
-    (neighbor) => neighbor.id === card.id,
-  );
-  const previousCard =
-    currentIndex > 0 ? neighborCards[currentIndex - 1] : undefined;
-  const nextCard =
-    currentIndex >= 0 && currentIndex < neighborCards.length - 1
-      ? neighborCards[currentIndex + 1]
-      : undefined;
   const backTo =
     fromContext === "wishlist" ? ROUTES.wishlist : ROUTES.collection;
   const backLabel =

@@ -116,12 +116,27 @@ const setCardOwnership = (
   return next;
 };
 
-// Owned-variant completion as a rounded 0..100 percentage. Centralizes the
-// rounding rule shared by the card detail page and the variant selector modal.
+// Owned-variant completion as a 0..100 percentage rounded to 2 decimal places.
+// Centralizes the rounding rule shared by the dashboard, the collection hero,
+// the card detail page, and the variant selector modal. 100% and 0% are
+// reserved for a truly complete or truly empty set, so a partial collection
+// never rounds up to "done" (e.g. 510 / 511 shows 99.8%, not 100%).
 export const getCompletionPercentage = (
   ownedCount: number,
   totalCount: number,
-): number => (totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0);
+): number => {
+  if (totalCount <= 0 || ownedCount <= 0) {
+    return 0;
+  }
+
+  if (ownedCount >= totalCount) {
+    return 100;
+  }
+
+  const rounded = Math.round((ownedCount / totalCount) * 10000) / 100;
+
+  return Math.min(Math.max(rounded, 0.01), 99.99);
+};
 
 export const getCollectionProgress = (
   cards: readonly CollectionCard[],
@@ -136,7 +151,7 @@ export const getCollectionProgress = (
   }
 
   const remaining = Math.max(total - collected, 0);
-  const percentage = total > 0 ? Math.round((collected / total) * 100) : 0;
+  const percentage = getCompletionPercentage(collected, total);
 
   return {
     collected,

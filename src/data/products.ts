@@ -208,8 +208,8 @@ export const products: Product[] = (
       image: "sv8pt5-8-pack-mini-tins",
       imageAlt: "Prismatic Evolutions Mini Tin 8-Pack product packaging",
       name: "Mini Tin - 8-Pack",
-      releaseDate: "2025-02-07",
-      releaseLabel: "Released Feb 7, 2025",
+      releaseDate: "2025-09-13",
+      releaseLabel: "Released Sep 13, 2025",
       promoSummary: "Contains all 8 Cosmos Holo Eeveelution promos.",
     },
     {
@@ -217,8 +217,8 @@ export const products: Product[] = (
       image: "sv8pt5-two-pack-blister",
       imageAlt: "Prismatic Evolutions Two Pack Blister product packaging",
       name: "Two Pack Blister",
-      releaseDate: "2025-02-27",
-      releaseLabel: "Released Feb 27, 2025",
+      releaseDate: "2025-02-21",
+      releaseLabel: "Released Feb 21, 2025",
       promoSummary: "Includes the Pokémon Day Eevee promo (#074).",
     },
     {
@@ -254,8 +254,8 @@ export const products: Product[] = (
       imageAlt:
         "Prismatic Evolutions Lucario ex & Tyranitar ex Premium Collection product packaging",
       name: "Lucario ex & Tyranitar ex Premium Collection",
-      releaseDate: "2025-08-01",
-      releaseLabel: "Released Aug 2025",
+      releaseDate: "2025-08-25",
+      releaseLabel: "Released Aug 25, 2025",
       promoSummary:
         "Expansion Stamp promos: Lucario ex (#051, standard + jumbo) and Tyranitar ex (#064).",
     },
